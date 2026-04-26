@@ -51,3 +51,4 @@ If you're a Claude Code session: read `CLAUDE.md` first, always. It has the proj
 ## Status
 
 Pre-development. Scaffolding only. See `GETTING_STARTED.md`.
+
