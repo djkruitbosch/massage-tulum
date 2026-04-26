@@ -1,0 +1,49 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+.next/
+dist/
+build/
+out/
+.turbo/
+
+# vercel
+.vercel/
+
+# coverage
+coverage/
+
+# env files (NEVER commit these)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# os
+.DS_Store
+Thumbs.db
+
+# editors
+.vscode/*
+!.vscode/settings.example.json
+.idea/
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# secrets
+*.pem
+*.key
+*.p12
+
+# claude code local settings (per-developer; never commit)
+.claude/settings.local.json
+
+# misc
+.cache/
+*.tsbuildinfo

@@ -1,0 +1,116 @@
+{
+  "$schema": "https://claude.ai/schemas/settings.json",
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./apps/api/.env)",
+      "Read(./apps/api/.env.*)",
+      "Read(./apps/web/.env)",
+      "Read(./apps/web/.env.*)",
+      "Read(./secrets/**)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(./**/id_rsa*)",
+      "Read(./**/credentials*)",
+      "Bash(git push origin main*)",
+      "Bash(git push --force*)",
+      "Bash(gh pr merge*)",
+      "Bash(rm -rf /*)",
+      "Bash(supabase db reset --linked*)",
+      "Bash(supabase db push --linked*)"
+    ],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(supabase db*)",
+      "Bash(pnpm publish*)",
+      "Bash(npm publish*)",
+      "Bash(vercel deploy*)",
+      "Bash(vercel --prod*)",
+      "Bash(curl * | sh)",
+      "Bash(curl * | bash)",
+      "Bash(wget * | sh)"
+    ],
+    "allow": [
+      "Read(./**)",
+      "Write(./apps/**)",
+      "Write(./packages/**)",
+      "Write(./docs/**)",
+      "Write(./.github/workflows/**)",
+      "Edit(./apps/**)",
+      "Edit(./packages/**)",
+      "Edit(./docs/**)",
+      "Edit(./.github/workflows/**)",
+      "Bash(pnpm install*)",
+      "Bash(pnpm i)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm build*)",
+      "Bash(pnpm typecheck*)",
+      "Bash(pnpm dev*)",
+      "Bash(pnpm run *)",
+      "Bash(pnpm exec *)",
+      "Bash(turbo run *)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git checkout*)",
+      "Bash(git branch*)",
+      "Bash(git pull*)",
+      "Bash(git stash*)",
+      "Bash(git restore*)",
+      "Bash(git switch*)",
+      "Bash(gh pr create*)",
+      "Bash(gh pr view*)",
+      "Bash(gh pr list*)",
+      "Bash(gh pr checkout*)",
+      "Bash(gh pr diff*)",
+      "Bash(gh pr comment*)",
+      "Bash(gh pr review*)",
+      "Bash(gh issue *)",
+      "Bash(gh repo view*)",
+      "Bash(gh run *)",
+      "Bash(gh workflow *)",
+      "Bash(supabase status)",
+      "Bash(supabase start)",
+      "Bash(supabase stop)",
+      "Bash(supabase migration list)",
+      "Bash(supabase migration new *)",
+      "Bash(supabase db reset)",
+      "Bash(supabase gen types *)",
+      "Bash(node *)",
+      "Bash(npx *)",
+      "Bash(ls*)",
+      "Bash(cat *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "Bash(find *)",
+      "Bash(tree*)",
+      "Bash(jq *)",
+      "Bash(echo *)",
+      "Bash(pwd)",
+      "Bash(which *)",
+      "Bash(mkdir -p *)",
+      "Bash(touch *)"
+    ],
+    "defaultMode": "default"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATH\" == *.ts || \"$CLAUDE_FILE_PATH\" == *.tsx ]]; then cd \"$CLAUDE_PROJECT_DIR\" && pnpm exec prettier --write \"$CLAUDE_FILE_PATH\" 2>/dev/null || true; fi"
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "NODE_ENV": "development"
+  }
+}
