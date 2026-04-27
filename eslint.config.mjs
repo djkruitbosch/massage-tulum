@@ -17,9 +17,13 @@ const config = [
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       parser: tsParser,
-      parserOptions: {
-        project: true,
-      },
+      // No parserOptions.project: the configured rules below are
+      // syntactic-only (no-explicit-any, no-var-requires, no-unused-vars)
+      // and don't need type info. Setting `project: true` would require
+      // every linted .ts file to be in some tsconfig 'include' — which
+      // test files (excluded from build tsconfigs) are not. Add a
+      // tsconfig.lint.json + reference it here later when type-aware
+      // rules are introduced.
     },
     plugins: {
       '@typescript-eslint': tsPlugin,

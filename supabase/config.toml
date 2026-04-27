@@ -137,14 +137,12 @@ template = "Your code is {{ .Code }} ."
 
 # Password-based auth is disabled. This platform uses magic-link (email OTP) only.
 # See ADR-0002: Supabase Environment Strategy.
-[auth.password]
-# Disable password sign-in. Only magic-link (email OTP) is supported.
-min_password_length = 8
-required_characters = []
-
-[auth.email.template.magic_link]
-subject = "Your Massage Tulum login link"
-# content_path = "./supabase/templates/magic_link.html"
+#
+# Disabling password auth is NOT configurable via config.toml in the current
+# Supabase CLI (the [auth.password] table is not a recognized key). It must
+# be disabled at the hosted project level: Supabase Dashboard → Authentication
+# → Providers → Email → toggle off "Enable Email provider"-style password
+# settings, OR via the Management API. Tracked in the deployment runbook.
 
 # Use an external OAuth provider. The full list of providers are:
 # `apple`, `azure`, `bitbucket`, `discord`, `facebook`, `figma`, `github`, `gitlab`, `google`,
