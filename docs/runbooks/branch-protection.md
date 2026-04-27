@@ -21,7 +21,7 @@ Branch protection cannot be expressed as code in this repo (no Terraform or GitH
 
 - The CI workflow (`.github/workflows/ci.yml`) has run at least once on the `main` branch or a PR targeting `main`. GitHub only allows requiring a status check name it has already seen.
 - `gh` CLI is installed and authenticated: `gh auth status` returns your GitHub account with `repo` scope.
-- You are the repo owner or have admin access to `djb4e/massage-tulum`.
+- You are the repo owner or have admin access to `djkruitbosch/massage-tulum`.
 - Secret Scanning and Push Protection are **already enabled** (human action, completed 2026-04-26). Steps in this runbook do not cover those — they are always-on GitHub settings in Security → Code security and analysis.
 
 ---
@@ -35,7 +35,7 @@ gh api \
   --method PUT \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
-  repos/djb4e/massage-tulum/branches/main/protection \
+  repos/djkruitbosch/massage-tulum/branches/main/protection \
   --input - <<'EOF'
 {
   "required_status_checks": {
@@ -103,7 +103,7 @@ After running the `gh api` command, confirm protection is active:
 gh api \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
-  repos/djb4e/massage-tulum/branches/main/protection
+  repos/djkruitbosch/massage-tulum/branches/main/protection
 ```
 
 Look for:
@@ -138,7 +138,7 @@ gh api \
   --method PATCH \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
-  repos/djb4e/massage-tulum \
+  repos/djkruitbosch/massage-tulum \
   -f allow_squash_merge=true \
   -f allow_merge_commit=false \
   -f allow_rebase_merge=false \
@@ -252,7 +252,7 @@ gh api \
   --method DELETE \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
-  repos/djb4e/massage-tulum/branches/main/protection
+  repos/djkruitbosch/massage-tulum/branches/main/protection
 ```
 
 Re-apply using the "Apply via `gh api`" section above as soon as the emergency is resolved.
