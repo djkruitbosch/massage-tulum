@@ -99,6 +99,10 @@ The main Claude Code session acts as the **Project Manager**. The PM does not ex
 🛑 GATE 3: Human reviews PR and merges to main
 ```
 
+### Parallel agent execution — always use git worktree isolation
+
+When the orchestrator launches more than one developer agent concurrently, **every concurrent agent must run with `isolation: "worktree"`** in its `Agent` invocation. The "different file paths" rule is necessary but **not sufficient**: by default, sub-agents share a single git working directory with one HEAD. As soon as one agent runs `git checkout -b`, every other agent's writes (and `git status`, and `git stash`) operate on that new branch — even when the agent thinks it's on `main`. Worse, dirty trees during a checkout get auto-stashed, sweeping uncommitted work (including unrelated files like `.claude/settings.json`) into stashes the agents don't track. Wave 1 of Foundation (2026-04-26) hit exactly this: of 5 parallel agents, 2 committed correctly, 3 wrote files into the wrong branch's working tree, and the orchestrator's permission edits ended up stashed and lost-looking. `isolation: "worktree"` gives each agent its own physical checkout (own HEAD, own working tree, own stash list) — they cannot collide. The cleanup at the end is automatic: empty worktrees are removed; agents that produced changes return their branch + path so the orchestrator can fast-forward and PR.
+
 ### Bug fix workflow
 
 Lighter: skip PM/Architect/Designer unless the bug reveals a design flaw. Go: ticket → developer → reviewer → QA → human merge.
