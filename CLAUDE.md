@@ -103,6 +103,16 @@ The main Claude Code session acts as the **Project Manager**. The PM does not ex
 
 When the orchestrator launches more than one developer agent concurrently, **every concurrent agent must run with `isolation: "worktree"`** in its `Agent` invocation. The "different file paths" rule is necessary but **not sufficient**: by default, sub-agents share a single git working directory with one HEAD. As soon as one agent runs `git checkout -b`, every other agent's writes (and `git status`, and `git stash`) operate on that new branch — even when the agent thinks it's on `main`. Worse, dirty trees during a checkout get auto-stashed, sweeping uncommitted work (including unrelated files like `.claude/settings.json`) into stashes the agents don't track. Wave 1 of Foundation (2026-04-26) hit exactly this: of 5 parallel agents, 2 committed correctly, 3 wrote files into the wrong branch's working tree, and the orchestrator's permission edits ended up stashed and lost-looking. `isolation: "worktree"` gives each agent its own physical checkout (own HEAD, own working tree, own stash list) — they cannot collide. The cleanup at the end is automatic: empty worktrees are removed; agents that produced changes return their branch + path so the orchestrator can fast-forward and PR.
 
+### Pre-merge validation — never declare a wave "done" until CI proves it
+
+Two rules apply to every developer-agent PR before the orchestrator surfaces it for human merge. They exist because Wave 1 of Foundation (2026-04-26) merged 5 PRs that each looked fine in isolation but stacked 6 distinct latent failures the moment they integrated on `main` — eight follow-up fixup PRs to dig out. The pattern is structurally preventable.
+
+**Rule 1 — Fresh-clone integration smoke test.** Before the orchestrator declares a wave done, run from a fresh `git clone` of the merged target branch (or the PR branch if pre-merge): `pnpm install && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm audit --audit-level=high --prod`. Any non-zero exit blocks the wave. "Each ticket's tests passed in isolation" is not enough — integration is where the failures actually surface.
+
+**Rule 2 — PR-branch CI must be green before requesting human merge.** `gh pr checks <pr>` must show all required status checks passing on the PR branch. Do not surface a PR to the human with red CI and a request to merge — the human will not be the integration test. If branch protection enforces required checks (CU-869d29mxg), this is automatic; until then the orchestrator enforces it manually.
+
+When CI is red on a PR, fix on the branch, re-push, wait for green, *then* surface for review. When CI is red on `main` (e.g. inherited from a wave that was merged before this rule existed), fixup PRs are still the right tool — but the underlying mistake is that those PRs should have surfaced their failures *before* their parent wave merged.
+
 ### Bug fix workflow
 
 Lighter: skip PM/Architect/Designer unless the bug reveals a design flaw. Go: ticket → developer → reviewer → QA → human merge.
