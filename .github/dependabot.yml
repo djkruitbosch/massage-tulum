@@ -1,0 +1,29 @@
+# Dependabot configuration — Massage Tulum
+# Strategy: weekly scans, max 5 open PRs, grouped by dep type.
+# See ADR-0005 for rationale (weekly vs daily, 5-PR cap, no Snyk in v1).
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    # "/" scans the workspace root. Dependabot resolves pnpm workspaces
+    # from the root package.json and pnpm-lock.yaml automatically.
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Etc/UTC"
+    # Cap at 5 concurrent PRs to prevent queue flooding (ADR-0005).
+    open-pull-requests-limit: 5
+    target-branch: "main"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    labels:
+      - "dependencies"
+    # Group prod and dev deps into separate PRs — reduces noise.
+    # Each group becomes one PR instead of one PR per package.
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+      development-dependencies:
+        dependency-type: "development"
