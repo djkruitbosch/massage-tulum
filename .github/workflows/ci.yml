@@ -10,6 +10,18 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Default GITHUB_TOKEN permissions for all jobs. Explicitly granted because
+# GitHub's default token has limited write scopes on pull_request events,
+# and gitleaks-action@v2 calls the GitHub API to list PR commits — without
+# pull-requests:read it errors with HTTP 403:
+#   'Resource not accessible by integration' on
+#   GET /repos/.../pulls/<n>/commits
+# Keep this minimal. Broaden per-job (e.g., `id-token: write` for OIDC
+# deploys) only when a specific job needs it.
+permissions:
+  contents: read
+  pull-requests: read
+
 # ---------------------------------------------------------------------------
 # Re-usable pnpm + Node setup steps are duplicated per job intentionally.
 # Each job is independently cacheable; sharing via artifacts adds complexity
