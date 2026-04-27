@@ -1,0 +1,3 @@
+-- seed.sql
+-- Populated per-feature; empty at Foundation.
+-- Add feature-specific seed rows below when a feature ticket requires test data.
