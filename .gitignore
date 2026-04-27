@@ -44,6 +44,9 @@ yarn-debug.log*
 # claude code local settings (per-developer; never commit)
 .claude/settings.local.json
 
+# claude code worktrees (orchestrator creates these for parallel agents; never commit)
+.claude/worktrees/
+
 # misc
 .cache/
 *.tsbuildinfo
