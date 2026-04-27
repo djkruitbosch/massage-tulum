@@ -1,0 +1,76 @@
+{
+  "home": {
+    "hero": {
+      "title": "Welcome to Massage Tulum",
+      "subtitle": "Professional management for your massage studio.",
+      "cta": "Get Started"
+    }
+  },
+  "layout": {
+    "skipLink": "Skip to main content",
+    "header": {
+      "logoAlt": "Massage Tulum"
+    },
+    "footer": {
+      "copyright": "© {year} Massage Tulum. All rights reserved."
+    }
+  },
+  "languageSwitcher": {
+    "label": "Select language",
+    "es": "ES",
+    "en": "EN",
+    "es.title": "Spanish",
+    "en.title": "English",
+    "current": "Current language: {locale}"
+  },
+  "common": {
+    "loading": {
+      "generic": "Loading..."
+    },
+    "button": {
+      "loading": "Loading...",
+      "retry": "Retry",
+      "cancel": "Cancel",
+      "save": "Save",
+      "delete": "Delete",
+      "confirm": "Confirm",
+      "close": "Close"
+    },
+    "error": {
+      "title": "Something went wrong",
+      "body": "Please reload the page.",
+      "reload": "Reload"
+    }
+  },
+  "toast": {
+    "dismiss": "Dismiss notification",
+    "region": {
+      "label": "Notifications"
+    },
+    "success": {
+      "loginLink": {
+        "title": "Link sent",
+        "description": "Check your email to sign in."
+      },
+      "saved": {
+        "title": "Changes saved",
+        "description": "Your changes have been saved."
+      }
+    },
+    "error": {
+      "generic": {
+        "title": "Something went wrong",
+        "description": "Please try again. If the problem persists, reload the page."
+      },
+      "network": {
+        "title": "No connection",
+        "description": "Check your internet connection and try again."
+      }
+    },
+    "info": {
+      "generic": {
+        "title": "Information"
+      }
+    }
+  }
+}

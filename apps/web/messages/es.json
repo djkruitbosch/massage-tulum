@@ -1,0 +1,76 @@
+{
+  "home": {
+    "hero": {
+      "title": "Bienvenido a Massage Tulum",
+      "subtitle": "Gestión profesional para tu estudio de masajes.",
+      "cta": "Comenzar"
+    }
+  },
+  "layout": {
+    "skipLink": "Ir al contenido principal",
+    "header": {
+      "logoAlt": "Massage Tulum"
+    },
+    "footer": {
+      "copyright": "© {year} Massage Tulum. Todos los derechos reservados."
+    }
+  },
+  "languageSwitcher": {
+    "label": "Seleccionar idioma",
+    "es": "ES",
+    "en": "EN",
+    "es.title": "Español",
+    "en.title": "Inglés",
+    "current": "Idioma actual: {locale}"
+  },
+  "common": {
+    "loading": {
+      "generic": "Cargando..."
+    },
+    "button": {
+      "loading": "Cargando...",
+      "retry": "Reintentar",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "delete": "Eliminar",
+      "confirm": "Confirmar",
+      "close": "Cerrar"
+    },
+    "error": {
+      "title": "Algo salió mal",
+      "body": "Por favor recarga la página.",
+      "reload": "Recargar"
+    }
+  },
+  "toast": {
+    "dismiss": "Cerrar notificación",
+    "region": {
+      "label": "Notificaciones"
+    },
+    "success": {
+      "loginLink": {
+        "title": "Enlace enviado",
+        "description": "Revisa tu correo para iniciar sesión."
+      },
+      "saved": {
+        "title": "Cambios guardados",
+        "description": "Tus cambios se guardaron correctamente."
+      }
+    },
+    "error": {
+      "generic": {
+        "title": "Ocurrió un error",
+        "description": "Por favor intenta de nuevo. Si el problema persiste, recarga la página."
+      },
+      "network": {
+        "title": "Sin conexión",
+        "description": "Verifica tu conexión a internet e intenta de nuevo."
+      }
+    },
+    "info": {
+      "generic": {
+        "title": "Información"
+      }
+    }
+  }
+}

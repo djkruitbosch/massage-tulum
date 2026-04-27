@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Base reset additions.
+  Tailwind's preflight handles most reset rules. These are additions
+  specific to the Massage Tulum design system.
+*/
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    /* Prevent iOS font size adjustment on orientation change */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    /* Default page background and text color from design tokens */
+    background-color: #f8f9fa; /* neutral-50 */
+    color: #343a40; /* neutral-700 */
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    /* Prevent horizontal scroll from overflow on body */
+    overflow-x: hidden;
+  }
+
+  /* Heading elements use Plus Jakarta Sans */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    line-height: 1.25;
+    color: #212529; /* neutral-800 */
+  }
+
+  /* Remove list styles when list has role="list" (explicit semantic intent) */
+  ul[role='list'],
+  ol[role='list'] {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Improve media defaults */
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Inherit fonts for inputs and buttons */
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  /* Avoid text overflows */
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+
+  /* Focus ring baseline — interactive elements get visible focus for keyboard users */
+  :focus-visible {
+    outline: 2px solid #7d5632; /* brand-600 */
+    outline-offset: 2px;
+  }
+
+  /* Skip link — visually hidden until focused */
+  .skip-link {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    z-index: 200;
+  }
+
+  .skip-link:focus {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #ffffff;
+    color: #5e3f24; /* brand-700 */
+    font-weight: 500;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(20, 14, 8, 0.08);
+    outline: 2px solid #7d5632; /* brand-600 */
+    outline-offset: 2px;
+  }
+}
