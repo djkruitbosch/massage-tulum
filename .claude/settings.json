@@ -93,7 +93,43 @@
       "Bash(pwd)",
       "Bash(which *)",
       "Bash(mkdir -p *)",
-      "Bash(touch *)"
+      "Bash(touch *)",
+
+      "Write(./package.json)",          "Edit(./package.json)",
+      "Write(./pnpm-workspace.yaml)",   "Edit(./pnpm-workspace.yaml)",
+      "Write(./turbo.json)",            "Edit(./turbo.json)",
+      "Write(./tsconfig.base.json)",    "Edit(./tsconfig.base.json)",
+      "Write(./.nvmrc)",                "Edit(./.nvmrc)",
+      "Write(./.editorconfig)",         "Edit(./.editorconfig)",
+      "Write(./.prettierrc)",           "Edit(./.prettierrc)",
+      "Write(./.prettierignore)",       "Edit(./.prettierignore)",
+      "Write(./.gitignore)",            "Edit(./.gitignore)",
+      "Write(./README.md)",             "Edit(./README.md)",
+
+      "Write(./eslint.config.js)",      "Edit(./eslint.config.js)",
+      "Write(./eslint.config.mjs)",     "Edit(./eslint.config.mjs)",
+      "Write(./eslint.config.cjs)",     "Edit(./eslint.config.cjs)",
+      "Write(./eslint.config.ts)",      "Edit(./eslint.config.ts)",
+
+      "Write(./commitlint.config.js)",  "Edit(./commitlint.config.js)",
+      "Write(./commitlint.config.mjs)", "Edit(./commitlint.config.mjs)",
+      "Write(./commitlint.config.cjs)", "Edit(./commitlint.config.cjs)",
+      "Write(./commitlint.config.ts)",  "Edit(./commitlint.config.ts)",
+
+      "Write(./vitest.config.ts)",      "Edit(./vitest.config.ts)",
+      "Write(./vitest.config.mts)",     "Edit(./vitest.config.mts)",
+      "Write(./vitest.config.js)",      "Edit(./vitest.config.js)",
+      "Write(./vitest.config.mjs)",     "Edit(./vitest.config.mjs)",
+
+      "Write(./supabase/**)",           "Edit(./supabase/**)",
+      "Write(./.husky/**)",             "Edit(./.husky/**)",
+
+      "Bash(pnpm exec husky *)",
+      "Bash(pnpm exec lint-staged *)",
+      "Bash(pnpm exec commitlint *)",
+      "Bash(supabase init*)",
+      "Bash(supabase test *)",
+      "Bash(corepack *)"
     ],
     "defaultMode": "default"
   },
