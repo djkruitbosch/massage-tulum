@@ -108,8 +108,10 @@ Full ADR list: `docs/adr/`.
 
 ### CSP
 
-- CSP middleware lives in `middleware.ts` (ticket FE-3, CU-869d29n0x — not yet implemented).
-- No inline `<script>` tags anywhere. React event handlers (onClick etc.) are CSP-safe.
+- CSP middleware lives in `middleware.ts`. Combined with the next-intl middleware in a single function. Generates a per-request nonce and sets `Content-Security-Policy` + `x-nonce` headers on every response.
+- The CSP policy itself lives in `lib/csp.ts` (`buildCsp(nonce)`). Implemented verbatim from ADR-0006; do not edit without an ADR supersession.
+- Server Components that need to inline a `<script>` tag (e.g., analytics) must read the nonce: `const nonce = (await headers()).get('x-nonce') ?? ''` and pass it to the tag's `nonce` attribute. `'strict-dynamic'` propagates trust from there.
+- No inline `<script>` tags without a nonce. React event handlers (onClick etc.) are CSP-safe.
 - Tailwind class-based styles are CSP-safe (compiled to stylesheet rules, not inline styles).
 - The `style-src 'unsafe-inline'` tradeoff is documented in ADR-0006.
 

@@ -1,28 +1,45 @@
 import createMiddleware from 'next-intl/middleware';
 import type { NextRequest } from 'next/server';
 import { routing } from './i18n/routing';
+import { buildCsp } from './lib/csp';
 
 /**
- * next-intl locale-detection middleware.
+ * Combined middleware: CSP nonce generation + next-intl locale detection.
  *
- * Locale routing:
- *   - `/`   → Spanish (default locale, no prefix per `as-needed`)
- *   - `/en` → English
+ * Execution order per request:
+ *   1. Generate a cryptographically random nonce (base64-encoded UUID).
+ *   2. Run next-intl middleware (locale detection, redirect if needed).
+ *   3. Set `Content-Security-Policy` and `x-nonce` headers on the response
+ *      (whether it is a normal 200 or a 307 locale redirect — the redirect
+ *      case is fine: the browser follows the redirect and a fresh nonce is
+ *      generated on the next request).
  *
- * Structure: the intlMiddleware is called inside an explicit `middleware`
- * function (rather than exported directly as `export default createMiddleware(...)`)
- * so that the CSP nonce middleware (ticket FE-3, CU-869d29n0x) can be combined
- * here without changing the public function signature.
+ * Server Components that need to inject a nonce into inline <script> tags
+ * (e.g. analytics snippets added in future sprints) must read the nonce via:
+ *   import { headers } from 'next/headers';
+ *   const nonce = (await headers()).get('x-nonce') ?? '';
  *
- * TODO(CU-869d29n0x): combine with CSP nonce middleware here.
- * When FE-3 is implemented, generate a nonce, call intlMiddleware(request),
- * then attach Content-Security-Policy and x-nonce headers to the response
- * before returning. See ADR-0006 and docs/research/2026-04-26-foundation.md §R5.
+ * Matcher excludes:
+ *   - /_next/static  (static assets)
+ *   - /_next/image   (image optimisation)
+ *   - /favicon.ico   (favicon)
+ *   - /api           (NestJS proxy routes — intentionally excluded)
+ *
+ * Ref: docs/adr/0006-csp-nextjs-app-router.md
+ * Ticket: CU-869d29n0x (FE-3)
  */
 const intlMiddleware = createMiddleware(routing);
 
 export function middleware(request: NextRequest) {
-  return intlMiddleware(request);
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const cspHeader = buildCsp(nonce);
+
+  const response = intlMiddleware(request);
+
+  response.headers.set('Content-Security-Policy', cspHeader);
+  response.headers.set('x-nonce', nonce);
+
+  return response;
 }
 
 export const config = {
@@ -32,10 +49,12 @@ export const config = {
      *   - /_next/static  (Next.js static assets)
      *   - /_next/image   (Next.js image optimization)
      *   - /favicon.ico   (favicon)
-     *   - /api           (API route handlers, if any)
+     *   - /api           (API route handlers — NestJS proxy routes)
      *
      * next-intl only processes page routes; excluding assets avoids
      * unnecessary locale detection overhead on static file requests.
+     * The /api exclusion is intentional: NestJS proxy routes must not
+     * be intercepted by the i18n middleware.
      */
     '/((?!_next/static|_next/image|favicon\\.ico|api).*)',
   ],
