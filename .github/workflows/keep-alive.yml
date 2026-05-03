@@ -1,0 +1,72 @@
+name: Supabase keep-alive
+
+# Keeps the dev (and future uat) Supabase free-tier project awake by pinging
+# the REST API every 3 days. Also prevents GitHub from auto-disabling scheduled
+# workflows after 60 days of repo inactivity via the keepalive-workflow action.
+#
+# See ADR-0002 §Free-tier pause mitigation for rationale.
+# Required secrets (repository-level Actions secrets):
+#   SUPABASE_URL      — e.g. https://xyzxyz.supabase.co
+#   SUPABASE_ANON_KEY — project anon/public key (safe to use in ping scripts)
+
+on:
+  schedule:
+    - cron: '0 8 */3 * *'   # 08:00 UTC every 3rd day — well within 7-day pause window
+  workflow_dispatch:          # Manual trigger for testing
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Minimal permissions. The keepalive job writes a commit so it needs
+# contents: write. The ping job only reads; it inherits the same permission
+# and that is fine (over-permissioned for ping, acceptable given same workflow).
+permissions:
+  contents: write
+
+jobs:
+
+  # --------------------------------------------------------------------------
+  # Job: ping
+  # Pings the Supabase REST API root with the anon key to reset the inactivity
+  # timer. HTTP 200 and HTTP 404 are both acceptable (the bare /rest/v1/ root
+  # may return 404 depending on Supabase version). Any other status means the
+  # project is paused, the key is invalid, or the URL is wrong.
+  # --------------------------------------------------------------------------
+  ping:
+    name: keep-alive/ping
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Supabase REST API
+        # Do NOT add `set -x` or echo the secret values — they must not appear
+        # in logs. The status code (numeric only) is safe to print.
+        run: |
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/")
+          echo "HTTP status: $STATUS"
+          if [ "$STATUS" != "200" ] && [ "$STATUS" != "404" ]; then
+            echo "Unexpected HTTP status $STATUS — project may be paused, key may be invalid, or URL may be wrong"
+            exit 1
+          fi
+          echo "Ping OK — Supabase project is active"
+
+  # --------------------------------------------------------------------------
+  # Job: keepalive
+  # Prevents GitHub from auto-disabling this scheduled workflow after 60 days
+  # of repo inactivity (GitHub's scheduled-workflow disable policy).
+  # Uses gautamkrishnar/keepalive-workflow@v2 with time_elapsed: 50 so it acts
+  # before the 60-day cutoff.
+  # --------------------------------------------------------------------------
+  keepalive:
+    name: keep-alive/keepalive-workflow
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: gautamkrishnar/keepalive-workflow@v2
+        with:
+          time_elapsed: 50
