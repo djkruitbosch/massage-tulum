@@ -28,26 +28,27 @@ jobs:
 
   # --------------------------------------------------------------------------
   # Job: ping
-  # Pings the Supabase REST API root with the anon key to reset the inactivity
-  # timer. HTTP 200 and HTTP 404 are both acceptable (the bare /rest/v1/ root
-  # may return 404 depending on Supabase version). Any other status means the
-  # project is paused, the key is invalid, or the URL is wrong.
+  # Pings the Supabase GoTrue settings endpoint with the anon key to reset the
+  # inactivity timer. /auth/v1/settings is a public endpoint that accepts the
+  # anon/publishable key and returns 200 when the project is active. (We
+  # cannot use /rest/v1/ — that root path requires service_role on current
+  # Supabase projects.) Any non-200 response means the project is paused, the
+  # key is invalid, or the URL is wrong.
   # --------------------------------------------------------------------------
   ping:
     name: keep-alive/ping
     runs-on: ubuntu-latest
 
     steps:
-      - name: Ping Supabase REST API
+      - name: Ping Supabase auth settings
         # Do NOT add `set -x` or echo the secret values — they must not appear
         # in logs. The status code (numeric only) is safe to print.
         run: |
           STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/")
+            "${{ secrets.SUPABASE_URL }}/auth/v1/settings")
           echo "HTTP status: $STATUS"
-          if [ "$STATUS" != "200" ] && [ "$STATUS" != "404" ]; then
+          if [ "$STATUS" != "200" ]; then
             echo "Unexpected HTTP status $STATUS — project may be paused, key may be invalid, or URL may be wrong"
             exit 1
           fi
