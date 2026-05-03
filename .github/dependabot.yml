@@ -20,13 +20,26 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
-    # Defer TypeScript major bumps until we choose to migrate.
-    # TS 6 has real breaking changes in this repo (Jest globals,
-    # moduleResolution=node10 deprecation, CSS module declarations).
-    # Reopen by removing this entry when we are ready to do the migration
-    # work. See closed PR #38 for the diagnosis.
+    # Defer specific major bumps that need dedicated migration tickets,
+    # not routine Dependabot review. Remove an entry when we're ready to
+    # do the migration work for that dep.
+    #
+    # - typescript: TS 6 breaks Jest globals, moduleResolution=node10
+    #   deprecation, CSS module declarations. See closed PR #38.
+    # - tailwindcss: v4 is the Oxide-engine rewrite (CSS-first config,
+    #   `@theme` blocks replacing `tailwind.config.js`, class renames).
+    #   See closed PR #46.
+    # - zod: v4 rewrites the parser and changes the error API; our shared
+    #   schemas in packages/shared cross BE+FE so the migration touches
+    #   every domain at once. See closed PR #50.
     ignore:
       - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "tailwindcss"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "zod"
         update-types:
           - "version-update:semver-major"
     # Group only minor + patch updates per dep-type — reduces noise without
