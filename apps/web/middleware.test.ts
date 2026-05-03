@@ -58,6 +58,14 @@ describe('middleware — CSP nonce headers', () => {
     expect(response.headers.get('Content-Security-Policy')).toContain(`'strict-dynamic'`);
   });
 
+  it("script-src does not contain 'unsafe-inline' (security-critical)", () => {
+    const response = middleware(makeRequest('/'));
+    const csp = response.headers.get('Content-Security-Policy')!;
+    const scriptSrc = csp.split(';').find((d) => d.trim().startsWith('script-src'));
+    expect(scriptSrc).toBeDefined();
+    expect(scriptSrc).not.toContain(`'unsafe-inline'`);
+  });
+
   it('CSP header contains frame-src none', () => {
     const response = middleware(makeRequest('/'));
     expect(response.headers.get('Content-Security-Policy')).toContain(`frame-src 'none'`);
