@@ -1,8 +1,14 @@
 name: Supabase keep-alive
 
 # Keeps the dev (and future uat) Supabase free-tier project awake by pinging
-# the REST API every 3 days. Also prevents GitHub from auto-disabling scheduled
-# workflows after 60 days of repo inactivity via the keepalive-workflow action.
+# the GoTrue settings endpoint every 3 days.
+#
+# NOTE: GitHub auto-disables scheduled workflows after 60 days of repo
+# inactivity. While v1 is being actively built we ship commits well within
+# that window, so we do not run a separate keep-alive-the-keep-alive job.
+# Revisit at v1 launch (or before any planned >60d quiet period) — likely
+# replace with an inline empty-commit step using GITHUB_TOKEN, since
+# third-party Actions are blocked by the repo's allowed-actions policy.
 #
 # See ADR-0002 §Free-tier pause mitigation for rationale.
 # Required secrets (repository-level Actions secrets):
@@ -18,11 +24,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Minimal permissions. The keepalive job writes a commit so it needs
-# contents: write. The ping job only reads; it inherits the same permission
-# and that is fine (over-permissioned for ping, acceptable given same workflow).
 permissions:
-  contents: write
+  contents: read
 
 jobs:
 
@@ -53,21 +56,3 @@ jobs:
             exit 1
           fi
           echo "Ping OK — Supabase project is active"
-
-  # --------------------------------------------------------------------------
-  # Job: keepalive
-  # Prevents GitHub from auto-disabling this scheduled workflow after 60 days
-  # of repo inactivity (GitHub's scheduled-workflow disable policy).
-  # Uses gautamkrishnar/keepalive-workflow@v2 with time_elapsed: 50 so it acts
-  # before the 60-day cutoff.
-  # --------------------------------------------------------------------------
-  keepalive:
-    name: keep-alive/keepalive-workflow
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: gautamkrishnar/keepalive-workflow@v2
-        with:
-          time_elapsed: 50
