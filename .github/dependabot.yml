@@ -32,6 +32,10 @@ updates:
     # - zod: v4 rewrites the parser and changes the error API; our shared
     #   schemas in packages/shared cross BE+FE so the migration touches
     #   every domain at once. See closed PR #50.
+    # - next: v16 drops the top-level `eslint` key from NextConfig (and
+    #   ships other config-shape changes); migration needs a dedicated
+    #   pass over next.config.ts and the eslint integration. See closed
+    #   PR #54.
     ignore:
       - dependency-name: "typescript"
         update-types:
@@ -40,6 +44,9 @@ updates:
         update-types:
           - "version-update:semver-major"
       - dependency-name: "zod"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "next"
         update-types:
           - "version-update:semver-major"
     # Group only minor + patch updates per dep-type — reduces noise without
