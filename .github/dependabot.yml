@@ -20,6 +20,15 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
+    # Defer TypeScript major bumps until we choose to migrate.
+    # TS 6 has real breaking changes in this repo (Jest globals,
+    # moduleResolution=node10 deprecation, CSS module declarations).
+    # Reopen by removing this entry when we are ready to do the migration
+    # work. See closed PR #38 for the diagnosis.
+    ignore:
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
     # Group only minor + patch updates per dep-type — reduces noise without
     # bundling breaking changes. Major bumps land as individual PRs so each
     # can be evaluated on its own merits (#28 reverted because TS 6 + ESLint
