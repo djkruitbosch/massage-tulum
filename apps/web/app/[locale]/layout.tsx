@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getLocale } from 'next-intl/server';
 import '../globals.css';
-
-// TODO(CU-869d29n0n): Add NextIntlClientProvider here once next-intl is installed (FE-2).
-// The [locale] param is used for <html lang> already — that part is ready.
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -30,15 +29,22 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children, params }: RootLayoutProps) {
-  const { locale } = await params;
+  // params.locale comes from the [locale] segment; getLocale() reads the
+  // same value from the next-intl request context established by middleware.
+  // Using getLocale() here is idiomatic for server layouts.
+  await params; // consume params to satisfy Next.js async params contract
+  const locale = await getLocale();
+
+  // Load all messages server-side; pass them to NextIntlClientProvider so
+  // Client Components nested anywhere in the tree can use useTranslations().
+  const messages = await getMessages();
 
   return (
-    <html
-      lang={locale}
-      className={`${inter.variable} ${plusJakartaSans.variable}`}
-    >
+    <html lang={locale} className={`${inter.variable} ${plusJakartaSans.variable}`}>
       <body className="font-sans antialiased">
-        {children}
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

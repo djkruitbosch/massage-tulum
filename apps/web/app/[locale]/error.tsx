@@ -1,9 +1,19 @@
 'use client';
 
-// TODO(CU-869d29n0n): replace inline strings with t() calls from next-intl (FE-2).
-// Keys: common.error.title, common.error.body, common.error.reload
+/**
+ * Error boundary page for the [locale] segment.
+ *
+ * This is a Client Component (required by Next.js App Router — error.tsx must
+ * be a Client Component to use the `reset` callback).
+ *
+ * Translations are accessed via `useTranslations` (synchronous hook, valid
+ * in Client Components when NextIntlClientProvider wraps the tree in layout.tsx).
+ *
+ * Strings: common.error.title, common.error.body, common.error.reload
+ */
 
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface ErrorPageProps {
   error: Error & { digest?: string };
@@ -11,6 +21,8 @@ interface ErrorPageProps {
 }
 
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
+  const t = useTranslations('common.error');
+
   useEffect(() => {
     // Log error to console in dev; replace with error reporting service post-launch.
     console.error('[ErrorBoundary]', error);
@@ -21,9 +33,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
       {/* Minimal header — LayoutShell not usable here since error may be in layout */}
       <header className="h-16 border-b border-neutral-200 bg-white shadow-sm">
         <div className="mx-auto flex h-full max-w-content items-center px-4 sm:px-6 lg:px-8">
-          <span className="font-heading text-xl font-bold text-brand-700">
-            Massage Tulum
-          </span>
+          <span className="font-heading text-xl font-bold text-brand-700">Massage Tulum</span>
         </div>
       </header>
 
@@ -38,17 +48,12 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
             !
           </span>
 
-          {/* TODO(CU-869d29n0n): replace with t('common.error.title') */}
           <h2 className="font-heading text-xl font-bold text-neutral-800 sm:text-2xl">
-            Something went wrong
+            {t('title')}
           </h2>
 
-          {/* TODO(CU-869d29n0n): replace with t('common.error.body') */}
-          <p className="text-base text-neutral-500">
-            Please reload the page.
-          </p>
+          <p className="text-base text-neutral-500">{t('body')}</p>
 
-          {/* TODO(CU-869d29n0n): replace label with t('common.error.reload') */}
           <button
             type="button"
             onClick={reset}
@@ -59,7 +64,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
               'motion-safe:transition-colors motion-safe:duration-[150ms] motion-safe:ease-out'
             }
           >
-            Reload
+            {t('reload')}
           </button>
         </div>
       </main>

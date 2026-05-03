@@ -19,8 +19,8 @@
     "label": "Select language",
     "es": "ES",
     "en": "EN",
-    "es.title": "Spanish",
-    "en.title": "English",
+    "esTitle": "Spanish",
+    "enTitle": "English",
     "current": "Current language: {locale}"
   },
   "common": {
