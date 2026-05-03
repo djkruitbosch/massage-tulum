@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--
+    welcome.html — Admin approval welcome email.
+    This is NOT a Supabase Go-template. It is a plain HTML template loaded by
+    the NestJS service and rendered server-side.
+
+    Placeholders replaced by NestJS before sending via Brevo HTTP API:
+      {{STUDIO_NAME}} — the approved studio's name
+      {{MAGIC_LINK}}  — the Supabase-generated magic-link (expires per otp_expiry)
+      {{LOCALE}}      — replaced by the lang attribute value below (not a placeholder)
+
+    Locale selection: NestJS renders the ES or EN content block based on the
+    pending_studios.locale field from the approval row.
+    See: docs/adr/0009-bilingual-supabase-email-templates.md §2 (welcome.html)
+  -->
+  <title>{{SUBJECT}}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9f9f9; margin: 0; padding: 40px 0; }
+    .container { max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .logo { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 32px; }
+    .body-text { font-size: 16px; line-height: 1.6; color: #333333; margin-bottom: 28px; }
+    .cta-button { display: inline-block; background: #1a1a1a; color: #ffffff !important; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-size: 16px; font-weight: 600; }
+    .footer { margin-top: 40px; font-size: 13px; color: #888888; border-top: 1px solid #eeeeee; padding-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">Massage Tulum</div>
+    <p class="body-text">{{BODY}}</p>
+    <a class="cta-button" href="{{MAGIC_LINK}}">{{CTA}}</a>
+    <div class="footer">{{FOOTER}}</div>
+  </div>
+</body>
+</html>

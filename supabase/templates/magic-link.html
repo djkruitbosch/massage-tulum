@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="{{ if eq .Data.locale "es" }}es{{ else }}en{{ end }}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {{ if eq .Data.locale "es" }}
+  <title>Tu enlace para acceder a Massage Tulum</title>
+  {{ else }}
+  <title>Your sign-in link for Massage Tulum</title>
+  {{ end }}
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9f9f9; margin: 0; padding: 40px 0; }
+    .container { max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .logo { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 32px; }
+    .body-text { font-size: 16px; line-height: 1.6; color: #333333; margin-bottom: 28px; }
+    .cta-button { display: inline-block; background: #1a1a1a; color: #ffffff !important; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-size: 16px; font-weight: 600; }
+    .footer { margin-top: 40px; font-size: 13px; color: #888888; border-top: 1px solid #eeeeee; padding-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">Massage Tulum</div>
+
+    {{ if eq .Data.locale "es" }}
+    <p class="body-text">
+      Hola, haz clic en el enlace a continuación para acceder a tu cuenta de Massage Tulum.
+      Este enlace expira en 1 hora.
+    </p>
+    <a class="cta-button" href="{{ .ConfirmationURL }}">Acceder &rarr;</a>
+    <div class="footer">
+      Si no solicitaste este enlace, ignora este mensaje.
+    </div>
+    {{ else }}
+    <p class="body-text">
+      Hi, click the link below to sign in to your Massage Tulum account.
+      This link expires in 1 hour.
+    </p>
+    <a class="cta-button" href="{{ .ConfirmationURL }}">Sign in &rarr;</a>
+    <div class="footer">
+      If you didn&rsquo;t request this, you can safely ignore this email.
+    </div>
+    {{ end }}
+  </div>
+</body>
+</html>
