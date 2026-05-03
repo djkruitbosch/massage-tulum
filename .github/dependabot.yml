@@ -20,10 +20,20 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
-    # Group prod and dev deps into separate PRs — reduces noise.
-    # Each group becomes one PR instead of one PR per package.
+    # Group only minor + patch updates per dep-type — reduces noise without
+    # bundling breaking changes. Major bumps land as individual PRs so each
+    # can be evaluated on its own merits (#28 reverted because TS 6 + ESLint
+    # 10 + Vitest 4 + Jest 30 + Tailwind 4 + Next-eslint-config 16 broke main
+    # together; #27 closed for the same reason on the prod side with Next 16
+    # + Zod 4 + lucide-react 1).
     groups:
       production-dependencies:
         dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
       development-dependencies:
         dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
