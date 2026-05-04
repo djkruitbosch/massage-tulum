@@ -16,36 +16,5 @@ ALTER TABLE public.studios ENABLE ROW LEVEL SECURITY;
 -- INSERT: No policy — only service-role (NestJS admin approval) can insert.
 -- DELETE: No policy — nobody can delete via the API.
 
--- SELECT: Studio owner can read only their own studio.
---         Resolved via studio_profiles join (see ADR-0007).
-CREATE POLICY "owner_select_studio"
-  ON public.studios
-  FOR SELECT
-  TO authenticated
-  USING (
-    id IN (
-      SELECT studio_id
-      FROM public.studio_profiles
-      WHERE id = auth.uid()
-    )
-  );
-
--- UPDATE: Studio owner can update only their own studio.
-CREATE POLICY "owner_update_studio"
-  ON public.studios
-  FOR UPDATE
-  TO authenticated
-  USING (
-    id IN (
-      SELECT studio_id
-      FROM public.studio_profiles
-      WHERE id = auth.uid()
-    )
-  )
-  WITH CHECK (
-    id IN (
-      SELECT studio_id
-      FROM public.studio_profiles
-      WHERE id = auth.uid()
-    )
-  );
+-- SELECT/UPDATE policies that reference public.studio_profiles are defined in
+-- 20260503000004_create_studios_owner_policies.sql, after that table exists.
