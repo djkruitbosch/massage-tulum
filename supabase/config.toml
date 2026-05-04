@@ -77,8 +77,14 @@ enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
 site_url = "http://127.0.0.1:3000"
-# A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+# A list of URLs that auth providers are permitted to redirect to post authentication.
+# Wildcards (**) are supported by the Supabase CLI local stack and hosted projects.
+# See ADR-0007 (amendment 2026-05-03) for rationale on the custom subdomain choice.
+additional_redirect_urls = [
+  "http://localhost:3000/**",
+  "http://127.0.0.1:3000/**",
+  "https://massage-tulum.dirk-jan.com/**"
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # If disabled, the refresh token will never expire.
@@ -102,30 +108,28 @@ double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
 enable_confirmations = true
 # Controls the minimum amount of time that must pass before sending another signup confirmation or
-# password recovery email.
-max_frequency = "1s"
+# password recovery email. 60s prevents accidental spam loops and aligns with Brevo free-tier
+# quota limits (spec AC-5, ADR-0007).
+max_frequency = "60s"
 # Number of characters used in the email OTP.
 otp_length = 6
-# Number of seconds before the email OTP expires (defaults to 1 hour).
-otp_expiry = 3600
+# Number of seconds before the email OTP expires. 604800 = 7 days (ADR-0007 amendment 2026-05-03).
+# 7-day expiry confirmed at Gate 2: studio owners check email infrequently. Single-use tokens —
+# clicking the link invalidates it immediately regardless of expiry.
+otp_expiry = 604800
 
-# Allows sending emails from a custom SMTP server.
-# [auth.email.smtp]
-# host = "smtp.sendgrid.net"
-# port = 587
-# user = "apikey"
-# pass = "env(SENDGRID_API_KEY)"
-# admin_email = "admin@email.com"
-# sender_name = "Admin"
-
-# Use a production-ready SMTP server
-# [auth.email.smtp]
-# host = "smtp.brevo.com"
-# port = 587
-# user = "env(BREVO_SMTP_USER)"
-# pass = "env(BREVO_SMTP_PASS)"
-# admin_email = "noreply@massage-tulum.com"
-# sender_name = "Massage Tulum"
+# Custom SMTP via Brevo (smtp-relay.brevo.com).
+# See ADR-0007 and docs/runbooks/supabase-project-setup.md for setup instructions.
+# Credentials are loaded from environment variables — NEVER commit real values here.
+# For local dev, email is captured by Inbucket (port 54324); this block does not affect
+# local dev email behaviour — Supabase CLI uses Inbucket for all local outbound email.
+[auth.email.smtp]
+host = "smtp-relay.brevo.com"
+port = 587
+user = "env(BREVO_SMTP_USER)"
+pass = "env(BREVO_SMTP_PASS)"
+admin_email = "noreply@massage-tulum.dirk-jan.com"
+sender_name = "Massage Tulum"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
