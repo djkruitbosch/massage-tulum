@@ -11,15 +11,16 @@
 BEGIN;
 SELECT plan(4);
 
--- Arrange: create two studios and two studio_profiles as service_role.
--- We need auth.users rows; in test context we reference UUIDs that may not
--- exist in auth.users but studio_profiles.id FK references auth.users.
--- Use the existing test user pattern from the project (no FK enforcement in pgTAP isolation).
-
--- Note: studio_profiles.id FKs to auth.users. In local pgTAP tests run via
--- supabase test db, auth.users rows for these UUIDs do not exist. We disable the
--- FK temporarily for test isolation.
-ALTER TABLE public.studio_profiles DISABLE TRIGGER ALL;
+-- Arrange: insert auth.users rows first (studio_profiles.id FKs to auth.users),
+-- then studios and studio_profiles. Run as service_role (bypasses RLS for setup).
+-- We can't DISABLE TRIGGER ALL because that touches RI system triggers, which
+-- require superuser; instead we satisfy the FK by inserting the parent rows.
+INSERT INTO auth.users (id, instance_id, aud, role, email)
+VALUES
+  ('aaaaaaaa-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'studios-owner-a@test.local'),
+  ('bbbbbbbb-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'studios-owner-b@test.local');
 
 INSERT INTO public.studios (id, name)
 VALUES
@@ -38,8 +39,6 @@ VALUES
     'bbbbbbbb-0000-0000-0000-000000000000',
     'bbbbbbbb-0002-0000-0000-000000000000'
   );
-
-ALTER TABLE public.studio_profiles ENABLE TRIGGER ALL;
 
 -- Test 1: anon cannot SELECT any studios.
 SET LOCAL role = anon;
