@@ -123,12 +123,90 @@ declare const messages: {
         body: 'Estamos revisando tu solicitud. Te enviaremos un correo cuando tu estudio sea aprobado.';
       };
     };
+    signup: {
+      title: 'Registra tu estudio';
+      subtitle: 'Cuéntanos sobre tu estudio y te contactaremos cuando sea aprobado.';
+      fields: {
+        email: 'Correo electrónico';
+        emailPlaceholder: 'ejemplo@tuestudio.com';
+        studioName: 'Nombre del estudio';
+        studioNamePlaceholder: 'Ej. Tulum Healing Studio';
+        contactPhone: 'Teléfono de contacto';
+        contactPhonePlaceholder: '+52 984 000 0000';
+        contactPhoneOptional: 'Opcional';
+        description: 'Cuéntanos sobre tu estudio';
+        descriptionPlaceholder: 'Servicios que ofreces, número de terapeutas, horarios, etc.';
+      };
+      submitButton: 'Enviar solicitud';
+      submittingButton: 'Enviando...';
+      alreadyHaveAccount: '¿Ya tienes cuenta? Accede aquí';
+      successTitle: 'Solicitud recibida';
+      successMessage: 'Revisaremos tu solicitud y te enviaremos un correo cuando tu estudio sea aprobado.';
+      charCount: '{current}/{max}';
+      errors: {
+        emailRequired: 'Ingresa tu correo electrónico';
+        emailInvalid: 'Ingresa un correo electrónico válido';
+        studioNameRequired: 'Ingresa el nombre de tu estudio';
+        studioNameTooLong: 'El nombre no puede tener más de 100 caracteres';
+        descriptionRequired: 'Cuéntanos sobre tu estudio';
+        descriptionTooLong: 'La descripción no puede tener más de 1000 caracteres';
+        genericError: 'Algo salió mal. Por favor intenta de nuevo.';
+      };
+    };
   };
   userMenu: {
     trigger: {
       label: 'Menú de usuario';
     };
     signedInAs: 'Conectado como';
+  };
+  admin: {
+    pendingStudios: {
+      title: 'Solicitudes pendientes';
+      count: '{count, plural, one {# solicitud} other {# solicitudes}}';
+      empty: 'No hay solicitudes pendientes.';
+      loading: 'Cargando solicitudes...';
+      columns: {
+        submittedAt: 'Fecha';
+        email: 'Correo';
+        studioName: 'Estudio';
+        contactPhone: 'Teléfono';
+        description: 'Descripción';
+        actions: 'Acciones';
+        noPhone: 'Sin teléfono';
+      };
+      actions: {
+        approve: 'Aprobar';
+        reject: 'Rechazar';
+        approveLabel: 'Aprobar: {studioName}';
+        rejectLabel: 'Rechazar: {studioName}';
+        approvingLabel: 'Aprobando...';
+      };
+      description: {
+        showMore: 'Ver más';
+        showLess: 'Ver menos';
+      };
+      approveModal: {
+        title: 'Aprobar estudio';
+        body: '¿Confirmas la aprobación de "{studioName}"? Se creará su cuenta y se enviará un correo de bienvenida con un enlace de acceso.';
+        confirmButton: 'Aprobar';
+        cancelButton: 'Cancelar';
+      };
+      rejectModal: {
+        title: 'Rechazar solicitud';
+        reasonLabel: 'Razón (opcional)';
+        reasonPlaceholder: 'Ingresa un motivo para tu registro interno...';
+        confirmButton: 'Rechazar';
+        cancelButton: 'Cancelar';
+      };
+      toast: {
+        approveSuccess: 'Estudio aprobado. Correo de bienvenida enviado.';
+        approveError: 'No se pudo aprobar el estudio. Intenta de nuevo.';
+        rejectSuccess: 'Solicitud rechazada.';
+        rejectError: 'No se pudo rechazar la solicitud. Intenta de nuevo.';
+        closeNotification: 'Cerrar notificación';
+      };
+    };
   };
 };
 export default messages;
