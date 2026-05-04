@@ -100,7 +100,7 @@ describe('submitSignup', () => {
     await submitSignup({ ...validPayload, locale: 'es' });
 
     expect(mockFetch).toHaveBeenCalledOnce();
-    const callArgs = mockFetch.mock.calls[0];
+    const callArgs = mockFetch.mock.calls[0]!;
     const requestBody = JSON.parse(callArgs[1].body as string);
     expect(requestBody.locale).toBe('es');
   });
@@ -114,7 +114,7 @@ describe('submitSignup', () => {
 
     await submitSignup(validPayload);
 
-    const callArgs = mockFetch.mock.calls[0];
+    const callArgs = mockFetch.mock.calls[0]!;
     const requestBody = JSON.parse(callArgs[1].body as string);
     expect(requestBody.email).toBe('owner@studio.com');
     expect(requestBody.studioName).toBe('Test Studio');
