@@ -11,8 +11,16 @@
 BEGIN;
 SELECT plan(4);
 
--- Arrange: insert studios and profiles as service_role.
-ALTER TABLE public.studio_profiles DISABLE TRIGGER ALL;
+-- Arrange: insert auth.users rows first to satisfy studio_profiles.id FK,
+-- then studios and studio_profiles. Run as service_role (bypasses RLS for setup).
+-- We can't DISABLE TRIGGER ALL because that touches RI system triggers, which
+-- require superuser; instead we satisfy the FK by inserting the parent rows.
+INSERT INTO auth.users (id, instance_id, aud, role, email)
+VALUES
+  ('aaaaaaaa-1111-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'owner-a@test.local'),
+  ('bbbbbbbb-1111-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'owner-b@test.local');
 
 INSERT INTO public.studios (id, name)
 VALUES
@@ -29,8 +37,6 @@ VALUES
     'bbbbbbbb-1111-0000-0000-000000000000',
     'cccccccc-0002-0000-0000-000000000000'
   );
-
-ALTER TABLE public.studio_profiles ENABLE TRIGGER ALL;
 
 -- Test 1: anon cannot SELECT any studio_profiles.
 SET LOCAL role = anon;
