@@ -116,3 +116,19 @@ additional_redirect_urls = [
 Original proposal was 24h expiry. Gate 2 review confirmed **7 days** (604800 seconds) for dev, on the grounds that studio owners check email infrequently. The token is single-use; if a link is clicked it is immediately invalidated. Revocation via service role key is available for compromise scenarios.
 
 This is the Supabase `otp_expiry` value. For production, this may be revisited when real users are onboarded.
+
+## Amendment: 2026-05-03 — split expiry (login 1h, welcome 7d)
+
+**Supersedes:** Amendment 2026-05-03 §2 above (the "everything = 7 days" decision).
+
+The earlier amendment set `otp_expiry = 604800` (7 days) globally to ensure the welcome magic-link sent on admin approval would still be valid days later. However, that change ALSO extends the routine login magic-link from 1 hour to 7 days — a worse security posture for the high-frequency code path (a stale unread login email is a long-lived credential).
+
+**Decision (project owner, 2026-05-03):** Use a split expiry — short global default for routine login, per-link override for the welcome email.
+
+- `supabase/config.toml`: `otp_expiry = 3600` (1 hour, Supabase default). Applies to all magic-links sent through Supabase's standard `signInWithOtp()` flow (i.e. studio owner login).
+- `supabase/config.toml`: `max_frequency = "1s"` for local dev ergonomics (Inbucket testing). The production Supabase Dashboard sets `60s` per spec AC-5; documented in the runbook so devops applies it on the hosted project, not in `config.toml`.
+- NestJS approval endpoint: when generating the welcome magic-link via `supabase.auth.admin.generateLink({ type: 'magiclink', email, options: { ... } })`, the BE sets a per-link 7-day lifetime. If the SDK does not currently expose a per-link override knob, the BE generates a long-lived link by setting `expires_at` on the underlying `auth.flow_state` record via service role; fallback: the welcome email is sent with the standard 1h expiry plus a "request a new link" recovery affordance in the email body.
+
+The implementation detail (per-link override mechanism) is owned by AUTH-BE-1 (CU-869d4z9yz) and the NestJS approval endpoint. The email copy in `supabase/templates/welcome.html` says "valid for 7 days"; the email copy in `supabase/templates/magic-link.html` says "expires in 1 hour".
+
+**Why this matters:** The previous 7-day global setting violated the principle of least privilege for the routine login path. The split keeps strong security for high-frequency credentials and only extends the lifetime where the use case (admin approves studio Friday, owner reads email Monday) genuinely requires it.
