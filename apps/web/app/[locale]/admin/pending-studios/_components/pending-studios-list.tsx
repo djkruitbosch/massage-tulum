@@ -159,7 +159,7 @@ export function PendingStudiosList({ initialApplications, locale }: PendingStudi
       <button
         type="button"
         onClick={() => setToast(null)}
-        aria-label="Close notification"
+        aria-label={t('toast.closeNotification')}
         className="shrink-0 text-current opacity-70 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current rounded"
       >
         &times;
@@ -186,7 +186,7 @@ export function PendingStudiosList({ initialApplications, locale }: PendingStudi
       {ToastBanner}
 
       {/* Mobile card list — hidden on md and above */}
-      <div className="md:hidden space-y-0">
+      <div className="md:hidden">
         {applications.map((app) => (
           <PendingStudioCard
             key={app.id}

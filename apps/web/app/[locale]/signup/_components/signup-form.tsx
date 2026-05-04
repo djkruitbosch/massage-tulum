@@ -37,7 +37,7 @@ const signupFormSchema = z.object({
   email: z.string().min(1, 'emailRequired').max(254, 'emailInvalid').email('emailInvalid'),
   studioName: z.string().min(1, 'studioNameRequired').max(100, 'studioNameTooLong'),
   contactPhone: z.string().max(20).optional(),
-  description: z.string().max(1000, 'descriptionTooLong').optional(),
+  description: z.string().min(1, 'descriptionRequired').max(1000, 'descriptionTooLong'),
 });
 
 type SignupFormValues = z.infer<typeof signupFormSchema>;
@@ -79,7 +79,7 @@ export function SignupForm({ locale }: SignupFormProps) {
         email: data.email,
         studioName: data.studioName,
         contactPhone: data.contactPhone || null,
-        description: data.description ?? '',
+        description: data.description,
         locale,
       });
 
@@ -146,6 +146,7 @@ export function SignupForm({ locale }: SignupFormProps) {
 
   const descriptionError = (() => {
     const m = errors.description?.message;
+    if (m === 'descriptionRequired') return t('errors.descriptionRequired');
     if (m === 'descriptionTooLong') return t('errors.descriptionTooLong');
     return m ? t('errors.descriptionTooLong') : null;
   })();

@@ -17,7 +17,7 @@
  * Ticket: CU-869d4za07
  */
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 interface RejectModalProps {
@@ -31,12 +31,8 @@ export function RejectModal({ onConfirm, onCancel }: RejectModalProps) {
   const t = useTranslations('admin.pendingStudios');
   const [reason, setReason] = useState('');
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  // Focus textarea on mount
+  // Focus textarea on mount via ref callback.
   const handleMount = (el: HTMLTextAreaElement | null) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ref assignment
-    (textareaRef as any).current = el;
     if (el) {
       el.focus();
     }

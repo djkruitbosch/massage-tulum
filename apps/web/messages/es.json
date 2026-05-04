@@ -200,7 +200,8 @@
         "approveSuccess": "Estudio aprobado. Correo de bienvenida enviado.",
         "approveError": "No se pudo aprobar el estudio. Intenta de nuevo.",
         "rejectSuccess": "Solicitud rechazada.",
-        "rejectError": "No se pudo rechazar la solicitud. Intenta de nuevo."
+        "rejectError": "No se pudo rechazar la solicitud. Intenta de nuevo.",
+        "closeNotification": "Cerrar notificación"
       }
     }
   }

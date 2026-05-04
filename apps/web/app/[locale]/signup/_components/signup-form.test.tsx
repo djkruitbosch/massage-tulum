@@ -180,6 +180,9 @@ describe('SignupForm', () => {
       fireEvent.change(screen.getByLabelText(/Studio name/i), {
         target: { value: 'Test Studio' },
       });
+      fireEvent.change(screen.getByLabelText(/Tell us about your studio/i), {
+        target: { value: 'A short description of the studio.' },
+      });
       fireEvent.click(screen.getByRole('button', { name: 'Submit application' }));
 
       // Eventually resolves to success
@@ -203,6 +206,9 @@ describe('SignupForm', () => {
       fireEvent.change(screen.getByLabelText(/Studio name/i), {
         target: { value: 'Test Studio' },
       });
+      fireEvent.change(screen.getByLabelText(/Tell us about your studio/i), {
+        target: { value: 'A short description of the studio.' },
+      });
       fireEvent.click(screen.getByRole('button', { name: 'Submit application' }));
 
       await waitFor(() => {
@@ -217,6 +223,9 @@ describe('SignupForm', () => {
       });
       fireEvent.change(screen.getByLabelText(/Studio name/i), {
         target: { value: 'Test Studio' },
+      });
+      fireEvent.change(screen.getByLabelText(/Tell us about your studio/i), {
+        target: { value: 'A short description of the studio.' },
       });
       fireEvent.click(screen.getByRole('button', { name: 'Submit application' }));
 
@@ -235,6 +244,9 @@ describe('SignupForm', () => {
       });
       fireEvent.change(screen.getByLabelText(/Studio name/i), {
         target: { value: 'Test Studio' },
+      });
+      fireEvent.change(screen.getByLabelText(/Tell us about your studio/i), {
+        target: { value: 'A short description of the studio.' },
       });
       fireEvent.click(screen.getByRole('button', { name: 'Submit application' }));
 
@@ -259,6 +271,9 @@ describe('SignupForm', () => {
       fireEvent.change(screen.getByLabelText(/Studio name/i), {
         target: { value: 'Test Studio' },
       });
+      fireEvent.change(screen.getByLabelText(/Tell us about your studio/i), {
+        target: { value: 'A short description of the studio.' },
+      });
       fireEvent.click(screen.getByRole('button', { name: 'Submit application' }));
 
       await waitFor(() => {
@@ -279,6 +294,9 @@ describe('SignupForm', () => {
       });
       fireEvent.change(screen.getByLabelText(/Studio name/i), {
         target: { value: 'Test Studio' },
+      });
+      fireEvent.change(screen.getByLabelText(/Tell us about your studio/i), {
+        target: { value: 'A short description of the studio.' },
       });
       fireEvent.click(screen.getByRole('button', { name: 'Submit application' }));
 

@@ -200,7 +200,8 @@
         "approveSuccess": "Studio approved. Welcome email sent.",
         "approveError": "Could not approve the studio. Please try again.",
         "rejectSuccess": "Application rejected.",
-        "rejectError": "Could not reject the application. Please try again."
+        "rejectError": "Could not reject the application. Please try again.",
+        "closeNotification": "Close notification"
       }
     }
   }
