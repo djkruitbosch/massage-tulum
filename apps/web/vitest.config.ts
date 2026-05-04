@@ -1,12 +1,17 @@
+import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  plugins: [react()],
   test: {
-    // Node environment is correct for Next.js middleware tests.
-    // Middleware runs in the Edge runtime (globalThis.crypto is available in Node 22).
+    // Node environment is the default for middleware tests.
+    // Component tests use jsdom (set per-file with @vitest-environment jsdom).
     environment: 'node',
     include: ['**/*.test.ts', '**/*.test.tsx'],
-    // Top-level await is used in middleware.test.ts for dynamic import after mocks.
-    // vitest supports this natively.
+    // globals: true is required for @testing-library/jest-dom matchers to work
+    // (the library extends the global expect object at import time).
+    globals: true,
+    // Setup file extends expect with jest-dom matchers for component tests.
+    setupFiles: ['./vitest.setup.ts'],
   },
 });
