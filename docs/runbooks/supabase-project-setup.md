@@ -211,9 +211,15 @@ The NestJS API runs in Coolify. Set the following environment variables in the C
 
 ---
 
-## Section 8: Production `max_frequency` note
+## Section 8: Production `max_frequency` and `otp_expiry`
 
-The `max_frequency = "60s"` setting in `supabase/config.toml` applies to the local CLI stack. For the hosted project, this value is set via the SMTP configuration in the Dashboard (Step 3, "Minimum Interval"). Confirm the hosted project's minimum interval is set to `60` seconds when configuring each environment.
+**`max_frequency` (rate-limit on magic-link requests).**
+`supabase/config.toml` keeps the Supabase default `"1s"` for local dev ergonomics (so Inbucket testing is fast). The hosted dev/uat/prod projects must override this to `"60s"` per spec AC-5. Set it via Dashboard → Authentication → Settings → "Email" section → "Minimum interval between requests" (or the SMTP "Minimum Interval" field, depending on Dashboard version). Confirm the value is `60` seconds when configuring each environment.
+
+**`otp_expiry` (magic-link lifetime).**
+`supabase/config.toml` keeps the Supabase default `3600` (1 hour) for the routine `signInWithOtp()` login flow. **Do not raise this globally.** The welcome magic-link sent on admin approval uses a per-link 7-day expiry override implemented inside the NestJS approval endpoint (`apps/api/src/studios/studios.service.ts`) via `supabase.auth.admin.generateLink()`. See ADR-0007 amendment 2026-05-03 (split expiry).
+
+If you change `otp_expiry` in the Dashboard for any environment, document the rationale in this runbook and update ADR-0007 with a new amendment.
 
 ---
 

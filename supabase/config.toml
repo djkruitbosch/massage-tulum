@@ -108,15 +108,16 @@ double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
 enable_confirmations = true
 # Controls the minimum amount of time that must pass before sending another signup confirmation or
-# password recovery email. 60s prevents accidental spam loops and aligns with Brevo free-tier
-# quota limits (spec AC-5, ADR-0007).
-max_frequency = "60s"
+# password recovery email. Local dev keeps "1s" for ergonomics (Inbucket testing); production
+# Supabase Dashboard sets "60s" per spec AC-5 (see docs/runbooks/supabase-project-setup.md).
+max_frequency = "1s"
 # Number of characters used in the email OTP.
 otp_length = 6
-# Number of seconds before the email OTP expires. 604800 = 7 days (ADR-0007 amendment 2026-05-03).
-# 7-day expiry confirmed at Gate 2: studio owners check email infrequently. Single-use tokens —
-# clicking the link invalidates it immediately regardless of expiry.
-otp_expiry = 604800
+# Number of seconds before the email OTP expires. 3600 = 1 hour (Supabase default) for the
+# normal magic-link login flow. The welcome magic-link sent on admin approval uses a per-link
+# 7-day expiry override via supabase.auth.admin.generateLink() in the NestJS approval endpoint
+# (see ADR-0007 amendment 2026-05-03 and ADR-0008 §welcome-email).
+otp_expiry = 3600
 
 # Custom SMTP via Brevo (smtp-relay.brevo.com).
 # See ADR-0007 and docs/runbooks/supabase-project-setup.md for setup instructions.
