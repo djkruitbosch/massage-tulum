@@ -204,6 +204,7 @@ declare const messages: {
         approveError: 'No se pudo aprobar el estudio. Intenta de nuevo.';
         rejectSuccess: 'Solicitud rechazada.';
         rejectError: 'No se pudo rechazar la solicitud. Intenta de nuevo.';
+        closeNotification: 'Cerrar notificación';
       };
     };
   };
