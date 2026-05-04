@@ -119,6 +119,36 @@
         "title": "Your studio is under review",
         "body": "We're reviewing your application. We'll email you when your studio is approved."
       }
+    },
+    "signup": {
+      "title": "Register your studio",
+      "subtitle": "Tell us about your studio and we'll contact you when it's approved.",
+      "fields": {
+        "email": "Email address",
+        "emailPlaceholder": "example@yourstudio.com",
+        "studioName": "Studio name",
+        "studioNamePlaceholder": "E.g. Tulum Healing Studio",
+        "contactPhone": "Contact phone",
+        "contactPhonePlaceholder": "+52 984 000 0000",
+        "contactPhoneOptional": "Optional",
+        "description": "Tell us about your studio",
+        "descriptionPlaceholder": "Services you offer, number of therapists, hours, etc."
+      },
+      "submitButton": "Submit application",
+      "submittingButton": "Submitting...",
+      "alreadyHaveAccount": "Already have an account? Sign in here",
+      "successTitle": "Application received",
+      "successMessage": "We'll review your application and email you when your studio is approved.",
+      "charCount": "{current}/{max}",
+      "errors": {
+        "emailRequired": "Enter your email address",
+        "emailInvalid": "Enter a valid email address",
+        "studioNameRequired": "Enter your studio name",
+        "studioNameTooLong": "Studio name cannot exceed 100 characters",
+        "descriptionRequired": "Tell us about your studio",
+        "descriptionTooLong": "Description cannot exceed 1000 characters",
+        "genericError": "Something went wrong. Please try again."
+      }
     }
   },
   "userMenu": {
@@ -126,5 +156,52 @@
       "label": "User menu"
     },
     "signedInAs": "Signed in as"
+  },
+  "admin": {
+    "pendingStudios": {
+      "title": "Pending applications",
+      "count": "{count, plural, one {# application} other {# applications}}",
+      "empty": "No pending applications.",
+      "loading": "Loading applications...",
+      "columns": {
+        "submittedAt": "Date",
+        "email": "Email",
+        "studioName": "Studio",
+        "contactPhone": "Phone",
+        "description": "Description",
+        "actions": "Actions",
+        "noPhone": "No phone"
+      },
+      "actions": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "approveLabel": "Approve: {studioName}",
+        "rejectLabel": "Reject: {studioName}",
+        "approvingLabel": "Approving..."
+      },
+      "description": {
+        "showMore": "Show more",
+        "showLess": "Show less"
+      },
+      "approveModal": {
+        "title": "Approve studio",
+        "body": "Confirm approval of \"{studioName}\"? Their account will be created and a welcome email with a sign-in link will be sent.",
+        "confirmButton": "Approve",
+        "cancelButton": "Cancel"
+      },
+      "rejectModal": {
+        "title": "Reject application",
+        "reasonLabel": "Reason (optional)",
+        "reasonPlaceholder": "Enter a reason for your internal records...",
+        "confirmButton": "Reject",
+        "cancelButton": "Cancel"
+      },
+      "toast": {
+        "approveSuccess": "Studio approved. Welcome email sent.",
+        "approveError": "Could not approve the studio. Please try again.",
+        "rejectSuccess": "Application rejected.",
+        "rejectError": "Could not reject the application. Please try again."
+      }
+    }
   }
 }
