@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Acceso a Massage Tulum / Massage Tulum Sign-in</title>
+  <title>Confirma tu nuevo correo / Confirm your new email</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -59,15 +59,16 @@
     <!-- Spanish (primary) -->
     <p>Hola,</p>
     <p>
-      Haz clic en el enlace de abajo para acceder a tu cuenta de Massage Tulum.
-      Este enlace es de un solo uso y es válido por 7 días.
+      Recibimos una solicitud para cambiar la dirección de correo electrónico
+      de tu cuenta de Massage Tulum. Confirma tu nuevo correo haciendo clic
+      en el enlace de abajo.
     </p>
-    <a class="button" href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next={{ .RedirectTo }}">
-      Acceder a Massage Tulum
+    <a class="button" href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email_change&next={{ .RedirectTo }}">
+      Confirmar nuevo correo electrónico
     </a>
     <p>
-      Si no solicitaste este enlace, puedes ignorar este correo.
-      Tu cuenta permanece segura.
+      Si no solicitaste este cambio, ignora este mensaje. Tu correo actual
+      no será modificado.
     </p>
 
     <hr class="divider" />
@@ -76,12 +77,12 @@
     <div class="lang-en">
       <p><strong>English:</strong></p>
       <p>
-        Click the button above to sign in to your Massage Tulum account.
-        This is a single-use link valid for 7 days.
+        We received a request to change the email address on your Massage Tulum
+        account. Confirm your new email by clicking the button above.
       </p>
       <p>
-        If you did not request this link, you can safely ignore this email.
-        Your account remains secure.
+        If you did not request this change, you can safely ignore this email.
+        Your current email address will not be changed.
       </p>
     </div>
 
