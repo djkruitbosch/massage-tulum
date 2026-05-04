@@ -76,5 +76,59 @@ declare const messages: {
       };
     };
   };
+  auth: {
+    login: {
+      title: 'Accede a tu estudio';
+      subtitle: 'Te enviaremos un enlace mágico a tu correo.';
+      emailLabel: 'Correo electrónico';
+      emailPlaceholder: 'ejemplo@tuestudio.com';
+      submitButton: 'Enviar enlace de acceso';
+      submittingButton: 'Enviando...';
+      firstTime: '¿Primera vez? Crea tu cuenta';
+      successTitle: 'Revisa tu correo';
+      successMessage: 'Te enviamos un enlace a {email}. Haz clic en él para acceder.';
+      resendPrompt: '¿No recibiste el correo? Revisa tu carpeta de spam, o';
+      resendButton: 'solicita otro enlace';
+      errors: {
+        emailRequired: 'Ingresa tu correo electrónico';
+        emailInvalid: 'Ingresa un correo electrónico válido';
+        tooManyRequests: 'Espera un momento antes de volver a intentarlo.';
+        genericError: 'Algo salió mal. Por favor intenta de nuevo.';
+        linkExpired: 'Ese enlace ha expirado. Ingresa tu correo para solicitar uno nuevo.';
+        invalidLink: 'Ese enlace no es válido. Ingresa tu correo para solicitar uno nuevo.';
+      };
+    };
+    callback: {
+      redirecting: 'Iniciando sesión...';
+      errors: {
+        linkExpired: 'Ese enlace ha expirado.';
+        invalidLink: 'Enlace no válido.';
+        networkError: 'Error de red. Por favor intenta de nuevo.';
+      };
+    };
+    logout: {
+      button: 'Cerrar sesión';
+      allDevices: 'Cerrar en todos los dispositivos';
+      confirmTitle: 'Cerrar sesión en todos los dispositivos';
+      confirmBody: 'Se cerrará tu sesión en todos los dispositivos donde estés conectado. ¿Continuar?';
+    };
+    dashboard: {
+      greeting: 'Bienvenido, {name}';
+      stub: {
+        title: 'Panel completo próximamente';
+        body: 'Estamos preparando las herramientas de gestión para tu estudio. Vuelve pronto.';
+      };
+      pendingApproval: {
+        title: 'Tu estudio está en revisión';
+        body: 'Estamos revisando tu solicitud. Te enviaremos un correo cuando tu estudio sea aprobado.';
+      };
+    };
+  };
+  userMenu: {
+    trigger: {
+      label: 'Menú de usuario';
+    };
+    signedInAs: 'Conectado como';
+  };
 };
 export default messages;

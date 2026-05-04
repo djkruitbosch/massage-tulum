@@ -72,5 +72,59 @@
         "title": "Information"
       }
     }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to your studio",
+      "subtitle": "We'll send a magic link to your email.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "example@yourstudio.com",
+      "submitButton": "Send sign-in link",
+      "submittingButton": "Sending...",
+      "firstTime": "First time? Create your account",
+      "successTitle": "Check your email",
+      "successMessage": "We sent a link to {email}. Click it to sign in.",
+      "resendPrompt": "Didn't receive it? Check your spam folder, or",
+      "resendButton": "request a new link",
+      "errors": {
+        "emailRequired": "Enter your email address",
+        "emailInvalid": "Enter a valid email address",
+        "tooManyRequests": "Please wait a moment before trying again.",
+        "genericError": "Something went wrong. Please try again.",
+        "linkExpired": "That link has expired. Enter your email to request a new one.",
+        "invalidLink": "That link is not valid. Enter your email to request a new one."
+      }
+    },
+    "callback": {
+      "redirecting": "Signing you in...",
+      "errors": {
+        "linkExpired": "That link has expired.",
+        "invalidLink": "Invalid link.",
+        "networkError": "Network error. Please try again."
+      }
+    },
+    "logout": {
+      "button": "Log out",
+      "allDevices": "Log out of all devices",
+      "confirmTitle": "Log out of all devices",
+      "confirmBody": "You'll be signed out on all devices where you're currently logged in. Continue?"
+    },
+    "dashboard": {
+      "greeting": "Welcome, {name}",
+      "stub": {
+        "title": "Full dashboard coming soon",
+        "body": "We're preparing your studio management tools. Check back soon."
+      },
+      "pendingApproval": {
+        "title": "Your studio is under review",
+        "body": "We're reviewing your application. We'll email you when your studio is approved."
+      }
+    }
+  },
+  "userMenu": {
+    "trigger": {
+      "label": "User menu"
+    },
+    "signedInAs": "Signed in as"
   }
 }
