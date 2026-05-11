@@ -1,0 +1,15 @@
+# Gitleaks allow-list — known-safe findings.
+#
+# Format: <commit_sha>:<path>:<rule_id>:<line>
+# (one fingerprint per line; lines starting with # are comments)
+#
+# Each entry MUST be accompanied by a justification comment explaining
+# why the finding is a false positive. Do not add entries to silence
+# real secrets — rotate them instead.
+
+# Test JWT fixture in supabase-jwt.guard.spec.ts (CU-869d8cnt3).
+# 37-char ASCII string used as the signing secret in unit tests for
+# the SupabaseJwtGuard. Tripped the generic-api-key rule (entropy 3.59).
+# Not a real secret, not used in any non-test code path, not present in
+# any production deployment configuration.
+3eea658c6fe42b3a7d449b633f07c0b76af85f5f:apps/api/src/common/guards/__tests__/supabase-jwt.guard.spec.ts:generic-api-key:7

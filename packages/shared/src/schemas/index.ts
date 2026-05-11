@@ -15,3 +15,19 @@ export type {
   PendingStudiosList,
   RejectStudioInput,
 } from './pending-studio.schema.js';
+
+export { phoneSchema, optionalPhoneSchema } from './phone.schema.js';
+export type { PhoneE164 } from './phone.schema.js';
+
+export {
+  studioProfileSchema,
+  updateStudioProfileSchema,
+  studioHoursEntrySchema,
+  studioHoursSchema,
+} from './studio-profile.schema.js';
+export type {
+  StudioProfile,
+  UpdateStudioProfileInput,
+  StudioHoursEntry,
+  StudioHours,
+} from './studio-profile.schema.js';
