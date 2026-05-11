@@ -122,3 +122,82 @@ describe('middleware — CSP headers (with auth)', () => {
     expect(csp).toContain(`'nonce-${nonce}'`);
   });
 });
+
+// ── 308 canonical-path enforcement (AC-5, ADR-0010) ─────────────────────────
+//
+// These tests verify the 308 short-circuit that intercepts non-canonical
+// privacy paths before next-intl runs. next-intl defaults to 307; the spec
+// requires 308 (permanent redirect) for correct SEO crawl-budget signaling.
+//
+// Ticket: CU-869d8202d
+describe('middleware — 308 privacy canonical redirects', () => {
+  // /privacy-policy (en slug without locale prefix) → /aviso-de-privacidad
+  it('redirects /privacy-policy to /aviso-de-privacidad with 308', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await middleware(makeRequest('/privacy-policy'));
+    expect(response.status).toBe(308);
+    const location = response.headers.get('location');
+    expect(location).toContain('/aviso-de-privacidad');
+  });
+
+  it('/privacy-policy redirect does not go to /privacy-policy (no loop)', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await middleware(makeRequest('/privacy-policy'));
+    expect(response.headers.get('location')).not.toContain('/privacy-policy');
+  });
+
+  // /en/aviso-de-privacidad (es slug under en prefix) → /en/privacy-policy
+  it('redirects /en/aviso-de-privacidad to /en/privacy-policy with 308', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await middleware(makeRequest('/en/aviso-de-privacidad'));
+    expect(response.status).toBe(308);
+    const location = response.headers.get('location');
+    expect(location).toContain('/en/privacy-policy');
+  });
+
+  it('/en/aviso-de-privacidad redirect does not contain /aviso-de-privacidad', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await middleware(makeRequest('/en/aviso-de-privacidad'));
+    const location = response.headers.get('location') ?? '';
+    // Must redirect to /en/privacy-policy, not the Spanish slug
+    expect(location).toContain('/en/privacy-policy');
+    expect(location).not.toContain('/aviso-de-privacidad');
+  });
+
+  // /es/aviso-de-privacidad (superfluous default-locale prefix) → /aviso-de-privacidad
+  it('redirects /es/aviso-de-privacidad to /aviso-de-privacidad with 308', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await middleware(makeRequest('/es/aviso-de-privacidad'));
+    expect(response.status).toBe(308);
+    const location = response.headers.get('location');
+    expect(location).toContain('/aviso-de-privacidad');
+    expect(location).not.toContain('/es/');
+  });
+
+  // Canonical paths must NOT be caught by the 308 short-circuit
+  it('does not redirect canonical /aviso-de-privacidad (es) — returns 200', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await middleware(makeRequest('/aviso-de-privacidad'));
+    // next-intl mock returns 200; the 308 map must not intercept this path
+    expect(response.status).toBe(200);
+  });
+
+  it('does not redirect /en/privacy-policy (en canonical) — returns 200', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await middleware(makeRequest('/en/privacy-policy'));
+    expect(response.status).toBe(200);
+  });
+
+  // 308 responses must still carry CSP + nonce headers
+  it('308 redirect response includes CSP header', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await middleware(makeRequest('/privacy-policy'));
+    expect(response.headers.get('Content-Security-Policy')).not.toBeNull();
+  });
+
+  it('308 redirect response includes x-nonce header', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await middleware(makeRequest('/privacy-policy'));
+    expect(response.headers.get('x-nonce')).not.toBeNull();
+  });
+});
