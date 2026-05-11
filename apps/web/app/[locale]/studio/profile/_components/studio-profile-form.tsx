@@ -85,24 +85,46 @@ const hoursEntryFormSchema = z
     { message: 'closeTime must be after openTime', path: ['closeTime'] },
   );
 
-const profileFormSchema = z.object({
-  name: z.string().min(1).max(120),
-  description: z.string().max(500).nullable().optional(),
-  phone: z
-    .string()
-    .nullable()
-    .optional()
-    .refine(
-      (val) => {
-        if (!val || val === '') return true;
-        // Basic E.164-ish validation — normalization happens server-side
-        return val.length >= 7 && val.length <= 20;
-      },
-      { message: 'Invalid phone number' },
-    ),
-  email: z.string().email().max(254).nullable().optional(),
-  hours: z.array(hoursEntryFormSchema).length(7).optional(),
-});
+// Sentinel for the cross-field "at least one of phone or email" error.
+// The schema is at module scope (no access to next-intl `t`), so it sets this
+// constant as the error `message`. The UI matches against the sentinel and
+// renders the translated copy from `field.contact.error.atLeastOne`.
+const ATLEASTONE_SENTINEL = '__atLeastOne';
+
+const profileFormSchema = z
+  .object({
+    // Max 100 chars — matches BE shared schema + DTO + DB CHECK (PR #72, #73).
+    name: z.string().min(1).max(100),
+    description: z.string().max(500).nullable().optional(),
+    phone: z
+      .string()
+      .nullable()
+      .optional()
+      .refine(
+        (val) => {
+          if (!val || val === '') return true;
+          // Basic E.164-ish validation — normalization happens server-side
+          return val.length >= 7 && val.length <= 20;
+        },
+        { message: 'Invalid phone number' },
+      ),
+    email: z.string().email().max(254).nullable().optional(),
+    hours: z.array(hoursEntryFormSchema).length(7).optional(),
+  })
+  // Cross-field: at least one of phone/email must be present (spec AC).
+  // Attached to `phone` so the UI's existing error-banner condition
+  // (`errors.phone?.message === ATLEASTONE_SENTINEL`) lights up.
+  .superRefine((data, ctx) => {
+    const phoneEmpty = !data.phone || data.phone === '';
+    const emailEmpty = !data.email || data.email === '';
+    if (phoneEmpty && emailEmpty) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['phone'],
+        message: ATLEASTONE_SENTINEL,
+      });
+    }
+  });
 
 type FormValues = z.infer<typeof profileFormSchema>;
 
@@ -360,7 +382,7 @@ export function StudioProfileForm({ initialData, onReload }: StudioProfileFormPr
                   id="field-name"
                   type="text"
                   autoComplete="organization"
-                  maxLength={120}
+                  maxLength={100}
                   aria-required="true"
                   aria-invalid={errors.name ? 'true' : undefined}
                   aria-describedby={errors.name ? nameErrorId : undefined}
@@ -424,8 +446,8 @@ export function StudioProfileForm({ initialData, onReload }: StudioProfileFormPr
           {/* ── Section 2: Contact ───────────────────────────────────── */}
           <FormSection title={t('section.contact')}>
             {/* Cross-field contact error */}
-            {(errors.phone?.message === t('field.contact.error.atLeastOne') ||
-              errors.email?.message === t('field.contact.error.atLeastOne')) && (
+            {(errors.phone?.message === ATLEASTONE_SENTINEL ||
+              errors.email?.message === ATLEASTONE_SENTINEL) && (
               <div
                 role="alert"
                 className="mb-4 flex gap-2 rounded-lg bg-danger-50 border border-danger-200 p-3 text-sm text-danger-700"
@@ -467,7 +489,7 @@ export function StudioProfileForm({ initialData, onReload }: StudioProfileFormPr
                       : 'border-neutral-200 hover:border-neutral-300',
                   ].join(' ')}
                 />
-                {errors.phone && errors.phone.message !== t('field.contact.error.atLeastOne') && (
+                {errors.phone && errors.phone.message !== ATLEASTONE_SENTINEL && (
                   <p
                     id={phoneErrorId}
                     role="alert"
@@ -507,7 +529,7 @@ export function StudioProfileForm({ initialData, onReload }: StudioProfileFormPr
                       : 'border-neutral-200 hover:border-neutral-300',
                   ].join(' ')}
                 />
-                {errors.email && errors.email.message !== t('field.contact.error.atLeastOne') && (
+                {errors.email && errors.email.message !== ATLEASTONE_SENTINEL && (
                   <p
                     id={emailErrorId}
                     role="alert"
