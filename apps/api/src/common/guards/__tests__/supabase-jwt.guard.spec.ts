@@ -4,7 +4,8 @@ import { SupabaseJwtGuard } from '../supabase-jwt.guard';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const JWT_SECRET = 'test-secret-at-least-32-chars-long-ok';
+// Test fixture only. Not a real secret. Gitleaks generic-api-key whitelisted via annotation.
+const JWT_SECRET = 'test-secret-at-least-32-chars-long-ok'; // gitleaks:allow
 const USER_ID = 'aaaaaaaa-0000-0000-0000-000000000001';
 
 function makeValidToken(overrides: Partial<jwt.JwtPayload> = {}): string {
