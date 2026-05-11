@@ -13,12 +13,12 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@supabase/ssr": "^0.10.2",
-    "@supabase/supabase-js": "^2.105.1",
+    "@supabase/supabase-js": "^2.105.4",
     "lucide-react": "^1.14.0",
-    "next": "15.5.15",
+    "next": "15.5.18",
     "next-intl": "^4.9.0",
-    "react": "19.2.5",
-    "react-dom": "19.2.5",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
     "react-hook-form": "^7.75.0",
     "zod": "^3.25.76"
   },
