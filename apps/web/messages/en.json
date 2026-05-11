@@ -41,6 +41,22 @@
       "title": "Something went wrong",
       "body": "Please reload the page.",
       "reload": "Reload"
+    },
+    "day": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
     }
   },
   "toast": {
@@ -119,6 +135,9 @@
       "pendingApproval": {
         "title": "Your studio is under review",
         "body": "We're reviewing your application. We'll email you when your studio is approved."
+      },
+      "nav": {
+        "studioProfile": "Studio profile"
       }
     },
     "signup": {
@@ -293,6 +312,81 @@
         "label": "10. Effective Date",
         "value": "March 21, 2025"
       }
+    }
+  },
+  "studioProfile": {
+    "page": {
+      "title": "Studio profile",
+      "subtitle": "Information visible on your public page"
+    },
+    "action": {
+      "save": "Save changes",
+      "cancel": "Cancel"
+    },
+    "section": {
+      "basicInfo": "General information",
+      "contact": "Contact",
+      "hours": "Operating hours"
+    },
+    "field": {
+      "name": {
+        "label": "Studio name",
+        "error": {
+          "required": "Studio name is required"
+        }
+      },
+      "description": {
+        "label": "Description",
+        "charCount": "{count}/500"
+      },
+      "phone": {
+        "label": "Phone (also WhatsApp)",
+        "placeholder": "+52 984 123 4567",
+        "helper": "This number will also be used for WhatsApp messages"
+      },
+      "email": {
+        "label": "Email address",
+        "error": {
+          "format": "Enter a valid email address"
+        }
+      },
+      "contact": {
+        "error": {
+          "atLeastOne": "You must provide at least one contact method (phone or email)"
+        }
+      }
+    },
+    "hours": {
+      "timezone": {
+        "note": "Times are in Cancún time (CST/CDT)"
+      },
+      "open": "Open",
+      "close": "Close",
+      "closed": "Closed",
+      "closedLabel": "Closed",
+      "toggleClosed": {
+        "label": "Mark {day} as closed"
+      },
+      "toggleOpen": {
+        "label": "Mark {day} as open"
+      },
+      "error": {
+        "closeAfterOpen": "Close time must be after open time"
+      }
+    },
+    "loading": "Loading studio profile",
+    "empty": {
+      "title": "Complete your profile",
+      "body": "Add your studio name and at least one contact method to get started"
+    },
+    "loadError": {
+      "title": "Could not load profile",
+      "body": "An error occurred while loading studio data.",
+      "retry": "Retry"
+    },
+    "permission": {
+      "title": "Access denied",
+      "body": "You do not have permission to view this page."
     }
   }
 }

@@ -32,7 +32,7 @@ import { buildCsp } from './lib/csp';
 const intlMiddleware = createIntlMiddleware(routing);
 
 /** Paths that require authentication — checked without locale prefix */
-const PROTECTED_PATHS = ['/dashboard', '/admin'];
+const PROTECTED_PATHS = ['/dashboard', '/admin', '/studio'];
 
 /** Paths that should redirect authenticated users away */
 const AUTH_REDIRECT_PATHS = ['/login', '/signup'];
