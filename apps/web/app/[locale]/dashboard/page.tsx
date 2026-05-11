@@ -15,7 +15,7 @@
  * Ticket: CU-869d4za67
  */
 
-import { LayoutGrid } from 'lucide-react';
+import { LayoutGrid, UserCircle } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { createClient } from '../../../utils/supabase/server';
@@ -86,6 +86,24 @@ export default async function DashboardPage() {
             <h1 className="font-heading text-3xl font-bold text-neutral-800 sm:text-2xl md:text-3xl">
               {tDashboard('greeting', { name: studioName })}
             </h1>
+
+            {/* Temporary nav links — full nav design deferred to auth feature */}
+            <nav className="mt-6 flex flex-wrap gap-3" aria-label={tDashboard('stub.title')}>
+              <a
+                href={locale === 'en' ? '/en/studio/profile' : '/studio/profile'}
+                className={[
+                  'inline-flex items-center gap-2 rounded-lg border border-neutral-200',
+                  'bg-white px-4 py-2.5 text-sm font-medium text-neutral-700',
+                  'hover:bg-neutral-50 hover:border-neutral-300',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600',
+                  'focus-visible:ring-offset-2',
+                  'motion-safe:transition-colors motion-safe:duration-150',
+                ].join(' ')}
+              >
+                <UserCircle size={16} className="text-neutral-500" aria-hidden="true" />
+                {tDashboard('nav.studioProfile')}
+              </a>
+            </nav>
 
             {/* Stub placeholder card */}
             <div className="bg-neutral-100 border border-neutral-200 rounded-2xl p-8 mt-6">

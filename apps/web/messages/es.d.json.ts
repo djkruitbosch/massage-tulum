@@ -45,6 +45,22 @@ declare const messages: {
       body: 'Por favor recarga la página.';
       reload: 'Recargar';
     };
+    day: {
+      monday: 'Lunes';
+      tuesday: 'Martes';
+      wednesday: 'Miércoles';
+      thursday: 'Jueves';
+      friday: 'Viernes';
+      saturday: 'Sábado';
+      sunday: 'Domingo';
+      mon: 'Lun';
+      tue: 'Mar';
+      wed: 'Mié';
+      thu: 'Jue';
+      fri: 'Vie';
+      sat: 'Sáb';
+      sun: 'Dom';
+    };
   };
   toast: {
     dismiss: 'Cerrar notificación';
@@ -122,6 +138,9 @@ declare const messages: {
       pendingApproval: {
         title: 'Tu estudio está en revisión';
         body: 'Estamos revisando tu solicitud. Te enviaremos un correo cuando tu estudio sea aprobado.';
+      };
+      nav: {
+        studioProfile: 'Perfil del estudio';
       };
     };
     signup: {
@@ -296,6 +315,81 @@ declare const messages: {
         label: '10. Fecha de Vigencia';
         value: '21 de marzo de 2025';
       };
+    };
+  };
+  studioProfile: {
+    page: {
+      title: 'Perfil del estudio';
+      subtitle: 'Información visible en tu página pública';
+    };
+    action: {
+      save: 'Guardar cambios';
+      cancel: 'Cancelar';
+    };
+    section: {
+      basicInfo: 'Información general';
+      contact: 'Contacto';
+      hours: 'Horario de atención';
+    };
+    field: {
+      name: {
+        label: 'Nombre del estudio';
+        error: {
+          required: 'El nombre del estudio es obligatorio';
+        };
+      };
+      description: {
+        label: 'Descripción';
+        charCount: '{count}/500';
+      };
+      phone: {
+        label: 'Teléfono (también WhatsApp)';
+        placeholder: '+52 984 123 4567';
+        helper: 'Este número se usará también para mensajes de WhatsApp';
+      };
+      email: {
+        label: 'Correo electrónico';
+        error: {
+          format: 'Ingresa un correo válido';
+        };
+      };
+      contact: {
+        error: {
+          atLeastOne: 'Debes ingresar al menos un método de contacto (teléfono o correo)';
+        };
+      };
+    };
+    hours: {
+      timezone: {
+        note: 'Los horarios son en hora de Cancún (CST/CDT)';
+      };
+      open: 'Apertura';
+      close: 'Cierre';
+      closed: 'Cerrado';
+      closedLabel: 'Cerrado';
+      toggleClosed: {
+        label: 'Marcar {day} como cerrado';
+      };
+      toggleOpen: {
+        label: 'Marcar {day} como abierto';
+      };
+      error: {
+        closeAfterOpen: 'La hora de cierre debe ser posterior a la de apertura';
+      };
+    };
+    loading: 'Cargando perfil del estudio';
+    empty: {
+      title: 'Completa tu perfil';
+      body: 'Agrega el nombre y al menos un método de contacto para comenzar';
+    };
+    loadError: {
+      title: 'No se pudo cargar el perfil';
+      body: 'Ocurrió un error al cargar los datos del estudio.';
+      retry: 'Reintentar';
+    };
+    permission: {
+      title: 'Sin acceso';
+      body: 'No tienes permiso para ver esta página.';
     };
   };
 };
