@@ -17,8 +17,8 @@ import { SupabaseJwtGuard, JwtRequest } from '../common/guards/supabase-jwt.guar
  *
  * Endpoints for the authenticated studio owner to read and update their profile.
  *
- *   GET  /api/studios/me  — returns studio name, address, phone, email, hours
- *   PATCH /api/studios/me — partial update of profile fields and/or hours
+ *   GET  /api/studios/profile  — returns studio name, address, phone, email, hours
+ *   PATCH /api/studios/profile — partial update of profile fields and/or hours
  *
  * Both endpoints require a valid Supabase JWT (SupabaseJwtGuard).
  * RLS on public.studios and public.studio_hours enforces that owners can
@@ -34,14 +34,14 @@ export class StudiosProfileController {
   constructor(private readonly profileService: StudiosProfileService) {}
 
   /**
-   * GET /api/studios/me
+   * GET /api/studios/profile
    *
    * Returns the authenticated studio owner's profile.
    *
    * The resolved studio is determined by the JWT sub claim → studio_profiles
    * lookup → studios row. Hours are included in the response.
    */
-  @Get('me')
+  @Get('profile')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get my studio profile',
@@ -72,6 +72,12 @@ export class StudiosProfileController {
           type: 'string',
           nullable: true,
           example: 'hello@mystudio.com',
+        },
+        description: {
+          type: 'string',
+          nullable: true,
+          maxLength: 500,
+          example: 'Holistic massage therapy in the heart of Tulum.',
         },
         hours: {
           type: 'array',
@@ -112,7 +118,7 @@ export class StudiosProfileController {
   }
 
   /**
-   * PATCH /api/studios/me
+   * PATCH /api/studios/profile
    *
    * Partial update of the studio profile. Any combination of fields may be
    * provided. When hours is included, all 7 weekdays must be provided
@@ -121,7 +127,7 @@ export class StudiosProfileController {
    * Business rule: after applying the patch, the studio must have a name
    * and at least one contact method (phone or email).
    */
-  @Patch('me')
+  @Patch('profile')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Update my studio profile',
@@ -132,7 +138,7 @@ export class StudiosProfileController {
       'After the update, the studio must have a name and at least one of phone/email.',
   })
   @ApiOkResponse({
-    description: 'Updated studio profile (same shape as GET /api/studios/me)',
+    description: 'Updated studio profile (same shape as GET /api/studios/profile)',
     schema: {
       type: 'object',
       properties: {
@@ -141,6 +147,7 @@ export class StudiosProfileController {
         address: { type: 'string', nullable: true },
         phone: { type: 'string', nullable: true },
         email: { type: 'string', nullable: true },
+        description: { type: 'string', nullable: true, maxLength: 500 },
         hours: { type: 'array', items: { type: 'object' } },
         updatedAt: { type: 'string', format: 'date-time' },
       },

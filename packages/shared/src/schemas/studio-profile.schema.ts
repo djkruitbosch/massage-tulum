@@ -35,6 +35,7 @@ export const studioHoursEntrySchema = z
   .refine(
     (data) => {
       if (!data.isOpen || !data.openTime || !data.closeTime) return true;
+      // HH:MM lexicographic order is equivalent to time order for zero-padded 24h strings.
       return data.closeTime > data.openTime;
     },
     { message: 'closeTime must be after openTime' },
@@ -50,7 +51,7 @@ export const studioHoursSchema = z.array(studioHoursEntrySchema).length(7);
 export type StudioHours = z.infer<typeof studioHoursSchema>;
 
 /**
- * Schema for the GET /api/studios/me response.
+ * Schema for the GET /api/studios/profile response.
  *
  * Represents the full studio profile as returned by the API.
  * Shared between:
@@ -65,6 +66,7 @@ export const studioProfileSchema = z.object({
   address: z.string().max(300).nullable(),
   phone: z.string().nullable(),
   email: z.string().email().nullable(),
+  description: z.string().max(500).nullable(),
   hours: z.array(studioHoursEntrySchema),
   updatedAt: z.string().datetime(),
 });
@@ -72,7 +74,7 @@ export const studioProfileSchema = z.object({
 export type StudioProfile = z.infer<typeof studioProfileSchema>;
 
 /**
- * Schema for PATCH /api/studios/me request body.
+ * Schema for PATCH /api/studios/profile request body.
  *
  * All fields are optional — partial update (last-write-wins).
  * At least one contact method (phone or email) must be present
@@ -86,6 +88,7 @@ export const updateStudioProfileSchema = z.object({
   address: z.string().max(300).nullable().optional(),
   phone: optionalPhoneSchema,
   email: z.string().email().max(254).nullable().optional(),
+  description: z.string().max(500).nullable().optional(),
   hours: z.array(studioHoursEntrySchema).length(7).optional(),
 });
 
