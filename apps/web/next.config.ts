@@ -30,6 +30,25 @@ const nextConfig = withNextIntl({
   // No inline <script> tags are used in this app — CSP middleware (ticket FE-3,
   // CU-869d29n0x) will be implemented separately and does not require any
   // next.config.ts header configuration.
+  //
+  // Transpile @massage-tulum/shared so Next.js compiles the TypeScript source
+  // directly (packages/shared/src) without requiring a pre-built dist/.
+  // The tsconfig.json path alias points to the src entry point.
+  // This is needed when running `next build` without first running
+  // `pnpm --filter @massage-tulum/shared build` (i.e. outside Turborepo).
+  transpilePackages: ['@massage-tulum/shared'],
+  webpack(config) {
+    // The shared package (packages/shared) uses NodeNext ESM convention:
+    // internal imports end in '.js' but the actual source files are '.ts'.
+    // extensionAlias tells webpack to try '.ts'/'.tsx' before '.js'.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (config as any).resolve.extensionAlias = {
+      '.js': ['.ts', '.tsx', '.js'],
+      '.mjs': ['.mts', '.mjs'],
+    };
+     
+    return config;
+  },
 });
 
 export default nextConfig;

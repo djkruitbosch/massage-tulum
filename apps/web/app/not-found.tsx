@@ -12,5 +12,9 @@
  * route needs it). This root-level file is intentionally minimal.
  */
 export default function RootNotFound() {
-  return null;
+  return (
+    <main>
+      <h1>404 — Page not found</h1>
+    </main>
+  );
 }
