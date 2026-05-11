@@ -1,8 +1,13 @@
 name: ci
 
 on:
+  # CI runs on every PR push (pull_request event) and on direct pushes to
+  # `main` only (post-merge sanity check). Earlier this ran on push to every
+  # branch, which duplicated every PR's CI (push + pull_request both fired).
+  # That ate the free GitHub Actions quota fast. See ADR-0004 + cost
+  # discipline section of CLAUDE.md.
   push:
-    branches: ['**']
+    branches: [main]
   pull_request:
     branches: [main]
 
