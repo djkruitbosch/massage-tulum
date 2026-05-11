@@ -109,6 +109,38 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(dashboardUrl);
   }
 
+  // ─── Step 2 (cont.): 308 canonical-path enforcement for localized routes ──
+  // next-intl defaults to 307 for path redirects. AC-5 requires 308 (permanent).
+  // Intercept the three non-canonical privacy paths before next-intl runs so
+  // crawlers update their index and stop re-crawling duplicate URLs.
+  //
+  // Non-canonical paths:
+  //   /privacy-policy          → /aviso-de-privacidad  (en slug, no locale prefix)
+  //   /en/aviso-de-privacidad  → /en/privacy-policy    (es slug under en prefix)
+  //   /es/aviso-de-privacidad  → /aviso-de-privacidad  (superfluous default-locale prefix)
+  //
+  // See: docs/adr/0010-next-intl-localized-pathnames.md
+  // Ticket: CU-869d8202d
+  const PRIVACY_308_MAP: Record<string, string> = {
+    '/privacy-policy': '/aviso-de-privacidad',
+    '/en/aviso-de-privacidad': '/en/privacy-policy',
+    '/es/aviso-de-privacidad': '/aviso-de-privacidad',
+  };
+
+  const canonical308 = PRIVACY_308_MAP[pathname];
+  if (canonical308) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = canonical308;
+    const redirectResponse = NextResponse.redirect(redirectUrl, { status: 308 });
+    // Merge Supabase auth cookies so the session is not lost on redirect
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie);
+    });
+    redirectResponse.headers.set('Content-Security-Policy', buildCsp(nonce));
+    redirectResponse.headers.set('x-nonce', nonce);
+    return redirectResponse;
+  }
+
   // ─── Step 3: next-intl middleware ───────────────────────────────────────
   const intlResponse = intlMiddleware(request);
 

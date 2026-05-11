@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+import { Footer } from './_components/footer';
 
 /**
  * Placeholder home page — Foundation sprint.
@@ -31,8 +32,6 @@ export default async function HomePage({ params }: HomePageProps) {
   const tLayout = await getTranslations('layout');
   const tHome = await getTranslations('home');
   const tLs = await getTranslations('languageSwitcher');
-
-  const currentYear = new Date().getFullYear();
 
   return (
     <>
@@ -134,13 +133,7 @@ export default async function HomePage({ params }: HomePageProps) {
         </main>
 
         {/* FOOTER */}
-        <footer className="h-12 border-t border-neutral-200 bg-white" role="contentinfo">
-          <div className="mx-auto flex h-full max-w-content items-center justify-center px-4 sm:px-6 lg:px-8 xl:px-10">
-            <p className="text-xs text-neutral-400 text-center">
-              {tLayout('footer.copyright', { year: String(currentYear) })}
-            </p>
-          </div>
-        </footer>
+        <Footer locale={locale} />
       </div>
     </>
   );

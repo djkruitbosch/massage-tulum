@@ -402,6 +402,44 @@ export function SignupForm({ locale }: SignupFormProps) {
         {isLoading ? t('submittingButton') : t('submitButton')}
       </button>
 
+      {/* Privacy disclosure — LFPDPPP Art. 22 + 23 simplified notice entry point.
+          Rendered below the submit button, above "already have an account".
+          Uses next-intl rich text to embed <a> links within the translated string.
+          Both privacyLink and arcoEmail render as real <a> elements (not modals/tooltips).
+          See: docs/design/components/SignupForm.md §Addendum: Privacy Disclosure Line
+          Ticket: CU-869d8202d */}
+      <p className="text-xs text-neutral-500 leading-relaxed mt-4 mb-2">
+        {t.rich('privacyDisclosure', {
+          privacyLink: (chunks) => (
+            <a
+              href={locale === 'en' ? '/en/privacy-policy' : '/aviso-de-privacidad'}
+              className={[
+                'text-brand-600 hover:text-brand-700 underline underline-offset-2',
+                'motion-safe:transition-colors motion-safe:duration-150',
+                'focus-visible:outline-none focus-visible:ring-2',
+                'focus-visible:ring-brand-600 focus-visible:ring-offset-2 rounded-sm',
+              ].join(' ')}
+              target="_self"
+            >
+              {chunks}
+            </a>
+          ),
+          arcoEmail: (chunks) => (
+            <a
+              href="mailto:privacy@massage-tulum.dirk-jan.com"
+              className={[
+                'text-brand-600 hover:text-brand-700 underline underline-offset-2',
+                'motion-safe:transition-colors motion-safe:duration-150',
+                'focus-visible:outline-none focus-visible:ring-2',
+                'focus-visible:ring-brand-600 focus-visible:ring-offset-2 rounded-sm',
+              ].join(' ')}
+            >
+              {chunks}
+            </a>
+          ),
+        })}
+      </p>
+
       {/* Already have an account link */}
       <p className="text-sm text-center mt-4">
         <a

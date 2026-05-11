@@ -16,6 +16,7 @@ declare const messages: {
     };
     footer: {
       copyright: '© {year} Massage Tulum. Todos los derechos reservados.';
+      privacyLink: 'Aviso de Privacidad';
     };
   };
   languageSwitcher: {
@@ -143,6 +144,8 @@ declare const messages: {
       successTitle: 'Solicitud recibida';
       successMessage: 'Revisaremos tu solicitud y te enviaremos un correo cuando tu estudio sea aprobado.';
       charCount: '{current}/{max}';
+      privacyDisclosure: 'Al enviar este formulario, aceptas nuestro <privacyLink>Aviso de Privacidad</privacyLink>. Tus datos serán usados para crear y administrar tu cuenta de estudio en Massage Tulum. Para ejercer tus derechos ARCO, escríbenos a <arcoEmail>privacy@massage-tulum.dirk-jan.com</arcoEmail>.';
+      privacyLink: 'Aviso de Privacidad';
       errors: {
         emailRequired: 'Ingresa tu correo electrónico';
         emailInvalid: 'Ingresa un correo electrónico válido';
@@ -205,6 +208,93 @@ declare const messages: {
         rejectSuccess: 'Solicitud rechazada.';
         rejectError: 'No se pudo rechazar la solicitud. Intenta de nuevo.';
         closeNotification: 'Cerrar notificación';
+      };
+    };
+  };
+  privacy: {
+    meta: {
+      title: 'Aviso de Privacidad — Massage Tulum';
+      description: 'Conoce cómo Massage Tulum trata tus datos personales, tus derechos ARCO y cómo contactarnos.';
+    };
+    page: {
+      title: 'Aviso de Privacidad';
+      lastUpdated: 'Última actualización: {date}';
+    };
+    toc: {
+      label: 'Contenido';
+    };
+    section: {
+      controller: {
+        heading: '1. Responsable del Tratamiento';
+        body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+      };
+      dataCategories: {
+        heading: '2. Datos Personales que Tratamos';
+        studioOwner: {
+          heading: '2.1 Datos de titulares del estudio';
+          body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+        };
+        therapist: {
+          heading: '2.2 Datos de terapeutas';
+          body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+        };
+      };
+      purposes: {
+        heading: '3. Finalidades del Tratamiento';
+        primary: {
+          heading: '3.1 Finalidades primarias';
+          body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+        };
+        secondary: {
+          heading: '3.2 Finalidades secundarias';
+          body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+        };
+      };
+      lawfulBasis: {
+        heading: '4. Base Legal';
+        body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+      };
+      retention: {
+        heading: '5. Conservación de Datos';
+        body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+      };
+      transfers: {
+        heading: '6. Transferencias y Alojamiento de Datos';
+        body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+      };
+      arco: {
+        heading: '7. Derechos ARCO';
+        access: {
+          heading: '7.1 Acceso';
+          body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+        };
+        rectification: {
+          heading: '7.2 Rectificación';
+          body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+        };
+        cancellation: {
+          heading: '7.3 Cancelación';
+          body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+        };
+        opposition: {
+          heading: '7.4 Oposición';
+          body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+        };
+        contact: {
+          body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+        };
+      };
+      cookies: {
+        heading: '8. Uso de Cookies';
+        body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+      };
+      changes: {
+        heading: '9. Cambios a este Aviso';
+        body: '[BLOCKING — final wording requires Mexican DPA lawyer review per OQ-6 deferral]';
+      };
+      effectiveDate: {
+        label: '10. Fecha de Vigencia';
+        value: '21 de marzo de 2025';
       };
     };
   };
