@@ -12,7 +12,8 @@
       "logoAlt": "Massage Tulum"
     },
     "footer": {
-      "copyright": "© {year} Massage Tulum. All rights reserved."
+      "copyright": "© {year} Massage Tulum. All rights reserved.",
+      "privacyLink": "Privacy Policy"
     }
   },
   "languageSwitcher": {
@@ -140,6 +141,8 @@
       "successTitle": "Application received",
       "successMessage": "We'll review your application and email you when your studio is approved.",
       "charCount": "{current}/{max}",
+      "privacyDisclosure": "By submitting this form, you agree to our <privacyLink>Privacy Policy</privacyLink>. Your data will be used to create and manage your studio account on Massage Tulum. To exercise your ARCO rights, email us at <arcoEmail>privacy@massage-tulum.dirk-jan.com</arcoEmail>.",
+      "privacyLink": "Privacy Policy",
       "errors": {
         "emailRequired": "Enter your email address",
         "emailInvalid": "Enter a valid email address",
@@ -202,6 +205,93 @@
         "rejectSuccess": "Application rejected.",
         "rejectError": "Could not reject the application. Please try again.",
         "closeNotification": "Close notification"
+      }
+    }
+  },
+  "privacy": {
+    "meta": {
+      "title": "Privacy Policy — Massage Tulum",
+      "description": "Learn how Massage Tulum processes your personal data, your ARCO rights, and how to contact us."
+    },
+    "page": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: {date}"
+    },
+    "toc": {
+      "label": "Contents"
+    },
+    "section": {
+      "controller": {
+        "heading": "1. Data Controller",
+        "body": "[BLOCKING — courtesy translation pending ES finalization]"
+      },
+      "dataCategories": {
+        "heading": "2. Personal Data We Process",
+        "studioOwner": {
+          "heading": "2.1 Studio Owner Data",
+          "body": "[BLOCKING — courtesy translation pending ES finalization]"
+        },
+        "therapist": {
+          "heading": "2.2 Therapist Data",
+          "body": "[BLOCKING — courtesy translation pending ES finalization]"
+        }
+      },
+      "purposes": {
+        "heading": "3. Purposes of Processing",
+        "primary": {
+          "heading": "3.1 Primary Purposes",
+          "body": "[BLOCKING — courtesy translation pending ES finalization]"
+        },
+        "secondary": {
+          "heading": "3.2 Secondary Purposes",
+          "body": "[BLOCKING — courtesy translation pending ES finalization]"
+        }
+      },
+      "lawfulBasis": {
+        "heading": "4. Lawful Basis",
+        "body": "[BLOCKING — courtesy translation pending ES finalization]"
+      },
+      "retention": {
+        "heading": "5. Data Retention",
+        "body": "[BLOCKING — courtesy translation pending ES finalization]"
+      },
+      "transfers": {
+        "heading": "6. Data Transfers and Hosting",
+        "body": "[BLOCKING — courtesy translation pending ES finalization]"
+      },
+      "arco": {
+        "heading": "7. ARCO Rights",
+        "access": {
+          "heading": "7.1 Access",
+          "body": "[BLOCKING — courtesy translation pending ES finalization]"
+        },
+        "rectification": {
+          "heading": "7.2 Rectification",
+          "body": "[BLOCKING — courtesy translation pending ES finalization]"
+        },
+        "cancellation": {
+          "heading": "7.3 Erasure",
+          "body": "[BLOCKING — courtesy translation pending ES finalization]"
+        },
+        "opposition": {
+          "heading": "7.4 Objection",
+          "body": "[BLOCKING — courtesy translation pending ES finalization]"
+        },
+        "contact": {
+          "body": "[BLOCKING — courtesy translation pending ES finalization]"
+        }
+      },
+      "cookies": {
+        "heading": "8. Cookie Usage",
+        "body": "[BLOCKING — courtesy translation pending ES finalization]"
+      },
+      "changes": {
+        "heading": "9. Changes to This Policy",
+        "body": "[BLOCKING — courtesy translation pending ES finalization]"
+      },
+      "effectiveDate": {
+        "label": "10. Effective Date",
+        "value": "March 21, 2025"
       }
     }
   }
