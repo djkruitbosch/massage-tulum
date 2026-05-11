@@ -7,9 +7,34 @@ import {
   Matches,
   Max,
   Min,
+  Validate,
   ValidateIf,
+  ValidationArguments,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+/**
+ * Cross-field constraint: closeTime must be strictly after openTime
+ * when isOpen=true. HH:MM lexicographic comparison is equivalent to
+ * time comparison for zero-padded 24h strings.
+ */
+@ValidatorConstraint({ name: 'IsCloseTimeAfterOpenTime', async: false })
+class IsCloseTimeAfterOpenTimeConstraint implements ValidatorConstraintInterface {
+  validate(closeTime: unknown, args: ValidationArguments): boolean {
+    const entry = args.object as StudioHoursEntryDto;
+    if (entry.isOpen !== true) return true; // not applicable when closed
+    if (typeof closeTime !== 'string' || typeof entry.openTime !== 'string') {
+      return true; // let format/required validators handle these cases
+    }
+    return closeTime > entry.openTime;
+  }
+
+  defaultMessage(): string {
+    return 'closeTime must be strictly after openTime';
+  }
+}
 
 /**
  * DTO for a single weekday entry in studio business hours.
@@ -62,6 +87,7 @@ export class StudioHoursEntryDto {
   @IsNotEmpty({ message: 'closeTime is required when isOpen is true' })
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, { message: 'closeTime must be HH:MM format' })
+  @Validate(IsCloseTimeAfterOpenTimeConstraint)
   @ValidateIf((o: StudioHoursEntryDto) => o.isOpen === false)
   @IsOptional()
   closeTime?: string | null;

@@ -15,7 +15,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { StudioHoursEntryDto } from './studio-hours-entry.dto';
 
 /**
- * DTO for PATCH /api/studios/me.
+ * DTO for PATCH /api/studios/profile.
  *
  * All fields are optional — any combination may be provided.
  * Business rule: after merge, the studio must have name + at least one
@@ -74,6 +74,17 @@ export class UpdateStudioProfileDto {
   @IsEmail()
   @MaxLength(254)
   email?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Free-text description of the studio (max 500 chars)',
+    example: 'Holistic massage therapy in the heart of Tulum.',
+    maxLength: 500,
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  description?: string | null;
 
   @ApiPropertyOptional({
     description:

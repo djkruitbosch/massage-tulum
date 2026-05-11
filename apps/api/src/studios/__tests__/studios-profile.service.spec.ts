@@ -18,6 +18,7 @@ const STUDIO_ROW = {
   address: 'Av. Tulum 123',
   phone: '+529841234567',
   email: 'studio@test.local',
+  description: 'Holistic massage in the heart of Tulum.',
   updated_at: '2026-05-03T10:00:00.000Z',
 };
 
