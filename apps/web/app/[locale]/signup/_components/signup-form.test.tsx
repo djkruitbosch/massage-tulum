@@ -49,6 +49,9 @@ const messages: any = {
       successTitle: 'Application received',
       successMessage: "We'll review your application and email you when your studio is approved.",
       charCount: '{current}/{max}',
+      privacyDisclosure:
+        'By submitting this form, you agree to our <privacyLink>Privacy Policy</privacyLink>. Your data will be used to create and manage your studio account on Massage Tulum. To exercise your ARCO rights, email us at <arcoEmail>privacy@massage-tulum.dirk-jan.com</arcoEmail>.',
+      privacyLink: 'Privacy Policy',
       errors: {
         emailRequired: 'Enter your email address',
         emailInvalid: 'Enter a valid email address',
@@ -348,6 +351,69 @@ describe('SignupForm', () => {
       renderSignupForm({ locale: 'en' });
       const loginLink = screen.getByText('Already have an account? Sign in here');
       expect(loginLink.closest('a')).toHaveAttribute('href', '/en/login');
+    });
+  });
+
+  // ── Privacy disclosure line (AC-10, LFPDPPP Art. 22 + 23) ─────────────────
+  //
+  // Verifies the simplified notice entry point below the submit button.
+  // Ticket: CU-869d8202d
+  describe('privacy disclosure line', () => {
+    it('renders the privacy policy link in the disclosure', () => {
+      renderSignupForm({ locale: 'en' });
+      const privacyLink = screen.getByRole('link', { name: /Privacy Policy/i });
+      expect(privacyLink).toBeInTheDocument();
+    });
+
+    it('privacy link points to /en/privacy-policy for English locale', () => {
+      renderSignupForm({ locale: 'en' });
+      const privacyLink = screen.getByRole('link', { name: /Privacy Policy/i });
+      expect(privacyLink).toHaveAttribute('href', '/en/privacy-policy');
+    });
+
+    it('privacy link points to /aviso-de-privacidad for Spanish locale', () => {
+      renderSignupForm({ locale: 'es' });
+      const privacyLink = screen.getByRole('link', { name: /Privacy Policy/i });
+      expect(privacyLink).toHaveAttribute('href', '/aviso-de-privacidad');
+    });
+
+    it('renders the ARCO email mailto link in the disclosure', () => {
+      renderSignupForm({ locale: 'en' });
+      const arcoLink = screen.getByRole('link', {
+        name: /privacy@massage-tulum\.dirk-jan\.com/i,
+      });
+      expect(arcoLink).toBeInTheDocument();
+      expect(arcoLink).toHaveAttribute('href', 'mailto:privacy@massage-tulum.dirk-jan.com');
+    });
+
+    it('disclosure paragraph is visible above the already-have-account link', () => {
+      renderSignupForm({ locale: 'en' });
+      // Both disclosure links and the already-have-account link must be present
+      expect(screen.getByRole('link', { name: /Privacy Policy/i })).toBeInTheDocument();
+      expect(screen.getByText('Already have an account? Sign in here')).toBeInTheDocument();
+    });
+
+    it('disclosure is not shown in the success state', async () => {
+      const { submitSignup } = await import('../../../../actions/signup');
+      vi.mocked(submitSignup).mockResolvedValue({ success: true });
+
+      renderSignupForm({ locale: 'en' });
+      fireEvent.change(screen.getByLabelText(/Email address/i), {
+        target: { value: 'owner@studio.com' },
+      });
+      fireEvent.change(screen.getByLabelText(/Studio name/i), {
+        target: { value: 'Test Studio' },
+      });
+      fireEvent.change(screen.getByLabelText(/Tell us about your studio/i), {
+        target: { value: 'A studio description.' },
+      });
+      fireEvent.click(screen.getByRole('button', { name: 'Submit application' }));
+
+      await waitFor(() => {
+        expect(screen.getByText('Application received')).toBeInTheDocument();
+        // Success state replaces the form — disclosure link should be gone
+        expect(screen.queryByRole('link', { name: /Privacy Policy/i })).not.toBeInTheDocument();
+      });
     });
   });
 });
