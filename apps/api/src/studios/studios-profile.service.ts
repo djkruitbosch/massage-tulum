@@ -20,6 +20,7 @@ interface StudioRow {
   address: string | null;
   phone: string | null;
   email: string | null;
+  description: string | null;
   updated_at: string;
 }
 
@@ -45,6 +46,7 @@ export interface StudioProfileResponse {
   address: string | null;
   phone: string | null;
   email: string | null;
+  description: string | null;
   hours: StudioHoursEntry[];
   updatedAt: string;
 }
@@ -134,7 +136,7 @@ export class StudiosProfileService {
     // Fetch studio row (RLS enforces ownership).
     const { data: studioData, error: studioError } = await userClient
       .from('studios')
-      .select('id, name, address, phone, email, updated_at')
+      .select('id, name, address, phone, email, description, updated_at')
       .eq('id', studioId)
       .single();
 
@@ -187,7 +189,7 @@ export class StudiosProfileService {
     // Fetch current state to validate business rules against merged data.
     const { data: currentData, error: currentError } = await userClient
       .from('studios')
-      .select('id, name, address, phone, email, updated_at')
+      .select('id, name, address, phone, email, description, updated_at')
       .eq('id', studioId)
       .single();
 
@@ -216,12 +218,14 @@ export class StudiosProfileService {
       address: string | null;
       phone: string | null;
       email: string | null;
+      description: string | null;
     }> = {};
 
     if (dto.name !== undefined) updatePayload.name = dto.name;
     if (dto.address !== undefined) updatePayload.address = dto.address ?? null;
     if (dto.phone !== undefined) updatePayload.phone = dto.phone ?? null;
     if (dto.email !== undefined) updatePayload.email = dto.email ?? null;
+    if (dto.description !== undefined) updatePayload.description = dto.description ?? null;
 
     // Update studios row if there are column changes.
     if (Object.keys(updatePayload).length > 0) {
@@ -290,6 +294,7 @@ export class StudiosProfileService {
       address: studio.address,
       phone: studio.phone,
       email: studio.email,
+      description: studio.description,
       hours,
       updatedAt: studio.updated_at,
     };
