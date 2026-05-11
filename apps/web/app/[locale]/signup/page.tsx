@@ -16,6 +16,7 @@
  */
 
 import { getLocale, getTranslations } from 'next-intl/server';
+import { Footer } from '../_components/footer';
 import { SignupForm } from './_components/signup-form';
 
 interface SignupPageProps {
@@ -29,8 +30,6 @@ export default async function SignupPage({ params }: SignupPageProps) {
   const tLayout = await getTranslations('layout');
   const tSignup = await getTranslations('auth.signup');
   const tLs = await getTranslations('languageSwitcher');
-
-  const currentYear = new Date().getFullYear();
 
   return (
     <>
@@ -115,13 +114,7 @@ export default async function SignupPage({ params }: SignupPageProps) {
         </main>
 
         {/* FOOTER */}
-        <footer className="h-12 border-t border-neutral-200 bg-white" role="contentinfo">
-          <div className="mx-auto flex h-full max-w-narrow items-center justify-center px-4">
-            <p className="text-xs text-neutral-400 text-center">
-              {tLayout('footer.copyright', { year: String(currentYear) })}
-            </p>
-          </div>
-        </footer>
+        <Footer locale={locale} />
       </div>
     </>
   );

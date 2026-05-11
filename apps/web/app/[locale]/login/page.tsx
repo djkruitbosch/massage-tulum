@@ -19,6 +19,7 @@
  */
 
 import { getLocale, getTranslations } from 'next-intl/server';
+import { Footer } from '../_components/footer';
 import { LoginForm } from './_components/login-form';
 
 interface LoginPageProps {
@@ -34,8 +35,6 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
   const tLayout = await getTranslations('layout');
   const tLogin = await getTranslations('auth.login');
   const tLs = await getTranslations('languageSwitcher');
-
-  const currentYear = new Date().getFullYear();
 
   const initialError = error === 'link_expired' || error === 'invalid_link' ? error : null;
 
@@ -122,13 +121,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
         </main>
 
         {/* FOOTER */}
-        <footer className="h-12 border-t border-neutral-200 bg-white" role="contentinfo">
-          <div className="mx-auto flex h-full max-w-narrow items-center justify-center px-4">
-            <p className="text-xs text-neutral-400 text-center">
-              {tLayout('footer.copyright', { year: String(currentYear) })}
-            </p>
-          </div>
-        </footer>
+        <Footer locale={locale} />
       </div>
     </>
   );
