@@ -29,7 +29,7 @@
 --   DELETE  — authenticated studio owner can delete their own therapists' photos.
 --   anon    — blocked for all operations.
 --
--- Four test cases (ADR-0013 requirement):
+-- Four test cases in canonical ADR-0003 order:
 --   1. anon-read-blocked: anon cannot SELECT from storage.objects for this bucket
 --   2. owner-read-allowed: owner can SELECT their own therapist's photo
 --   3. cross-owner-read-blocked: owner cannot SELECT another studio's photo
@@ -105,16 +105,7 @@ SELECT is_empty(
   'anon: cannot read any therapist-photos storage objects'
 );
 
--- ─── Test 2: anon cannot INSERT into storage.objects ─────────────────────────
-SELECT throws_ok(
-  $$ INSERT INTO storage.objects (bucket_id, name)
-     VALUES ('therapist-photos',
-             'therapists/eeeeeeee-0002-0000-0000-000000000000/evil.webp') $$,
-  'new row violates row-level security policy for table "objects"',
-  'anon: cannot insert into storage.objects for therapist-photos bucket'
-);
-
--- ─── Test 3: owner-A can SELECT their own therapist''s photo ─────────────────
+-- ─── Test 2: owner-A can SELECT their own therapist''s photo ─────────────────
 RESET role;
 SET LOCAL role = authenticated;
 SET LOCAL "request.jwt.claims" =
@@ -129,12 +120,23 @@ SELECT is(
   'owner-A: can read own therapist photo object'
 );
 
--- ─── Test 4: owner-A cannot read Studio B''s therapist photo (cross-owner) ────
+-- ─── Test 3: owner-A cannot read Studio B''s therapist photo (cross-owner) ────
 SELECT is_empty(
   $$ SELECT * FROM storage.objects
      WHERE bucket_id = 'therapist-photos'
        AND name LIKE 'therapists/ffffffff-0002-0000-0000-000000000000/%' $$,
   'owner-A: cannot read cross-owner therapist photo'
+);
+
+-- ─── Test 4: anon cannot INSERT into storage.objects ─────────────────────────
+RESET role;
+SET LOCAL role = anon;
+SELECT throws_ok(
+  $$ INSERT INTO storage.objects (bucket_id, name)
+     VALUES ('therapist-photos',
+             'therapists/eeeeeeee-0002-0000-0000-000000000000/evil.webp') $$,
+  'new row violates row-level security policy for table "objects"',
+  'anon: cannot insert into storage.objects for therapist-photos bucket'
 );
 
 SELECT * FROM finish();

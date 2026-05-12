@@ -31,3 +31,19 @@ export type {
   StudioHoursEntry,
   StudioHours,
 } from './studio-profile.schema.js';
+
+// Therapist schemas. Note for FE-1 (CU-869d8k3yv): the exported names are
+// `therapistSchema` and `setTherapistStatusSchema`, not the `therapistResponseSchema`
+// / `updateTherapistStatusSchema` names used in architecture doc §4j. Same shapes.
+export {
+  therapistSchema,
+  createTherapistSchema,
+  updateTherapistSchema,
+  setTherapistStatusSchema,
+} from './therapist.schema.js';
+export type {
+  Therapist,
+  CreateTherapistInput,
+  UpdateTherapistInput,
+  SetTherapistStatusInput,
+} from './therapist.schema.js';
