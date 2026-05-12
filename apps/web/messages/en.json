@@ -370,13 +370,16 @@
     "deactivate": {
       "title": "Deactivate {name}?",
       "body": "The therapist will no longer appear in new bookings.",
-      "warning": "This therapist may have upcoming bookings. Check your schedule before deactivating."
+      "warning": "This therapist may have upcoming bookings. Check your schedule before deactivating.",
+      "error": "Could not deactivate the therapist. Please try again."
     },
     "reactivate": {
       "title": "Reactivate {name}?",
-      "body": "The therapist will become available for new bookings again."
+      "body": "The therapist will become available for new bookings again.",
+      "error": "Could not reactivate the therapist. Please try again."
     },
     "filter": {
+      "groupLabel": "Filter by status",
       "active": "Active",
       "deactivated": "Deactivated",
       "all": "All"
@@ -409,7 +412,7 @@
       "uploadPhoto": "Upload photo",
       "replacePhoto": "Replace photo",
       "removePhoto": "Remove photo",
-      "fileHint": "PNG, JPG, or WebP. Maximum 2 MB. Square format (1:1) recommended.",
+      "fileHint": "PNG, JPG, or WebP. Maximum 5 MB. Square format (1:1) recommended.",
       "fileInput": {
         "label": "Select therapist photo"
       },
@@ -417,7 +420,8 @@
       "error": {
         "fileType": "Invalid file type. Use PNG, JPG, or WebP.",
         "fileSize": "File is too large. Maximum size is 5 MB.",
-        "uploadFailed": "Could not upload the photo. Please try again."
+        "uploadFailed": "Could not upload the photo. Please try again.",
+        "removeFailed": "Could not remove the photo. Please try again."
       },
       "undo": {
         "title": "Photo removed",

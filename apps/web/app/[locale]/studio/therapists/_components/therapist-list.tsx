@@ -221,7 +221,7 @@ export function TherapistList({ initialTherapists, initialFilter, locale }: Ther
 
       {/* Filter bar */}
       <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-        <div className="inline-flex gap-2" role="group" aria-label={t('filter.active')}>
+        <div className="inline-flex gap-2" role="group" aria-label={t('filter.groupLabel')}>
           <button
             type="button"
             onClick={() => handleFilterChange('active')}

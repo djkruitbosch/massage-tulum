@@ -374,12 +374,15 @@ declare const messages: {
       title: '¿Desactivar a {name}?';
       body: 'El terapeuta no aparecerá en nuevas reservas.';
       warning: 'Este terapeuta puede tener reservas próximas. Revisa tu agenda antes de desactivarlo.';
+      error: 'No se pudo desactivar al terapeuta. Intenta de nuevo.';
     };
     reactivate: {
       title: '¿Reactivar a {name}?';
       body: 'El terapeuta volverá a estar disponible para nuevas reservas.';
+      error: 'No se pudo reactivar al terapeuta. Intenta de nuevo.';
     };
     filter: {
+      groupLabel: 'Filtrar por estado';
       active: 'Activos';
       deactivated: 'Desactivados';
       all: 'Todos';
@@ -412,7 +415,7 @@ declare const messages: {
       uploadPhoto: 'Subir foto';
       replacePhoto: 'Reemplazar foto';
       removePhoto: 'Eliminar foto';
-      fileHint: 'PNG, JPG o WebP. Máximo 2 MB. Se recomienda formato cuadrado (1:1).';
+      fileHint: 'PNG, JPG o WebP. Máximo 5 MB. Se recomienda formato cuadrado (1:1).';
       fileInput: {
         label: 'Seleccionar foto del terapeuta';
       };
@@ -421,6 +424,7 @@ declare const messages: {
         fileType: 'Tipo de archivo no válido. Usa PNG, JPG o WebP.';
         fileSize: 'El archivo es demasiado grande. El máximo es 5 MB.';
         uploadFailed: 'No se pudo subir la foto. Intenta de nuevo.';
+        removeFailed: 'No se pudo eliminar la foto. Intenta de nuevo.';
       };
       undo: {
         title: 'Foto eliminada';

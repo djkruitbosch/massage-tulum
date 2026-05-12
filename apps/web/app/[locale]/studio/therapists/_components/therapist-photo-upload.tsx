@@ -98,7 +98,7 @@ export function TherapistPhotoUpload({
       if (result.success) {
         onPhotoChange(null);
       } else {
-        setError(t('avatar.error.uploadFailed'));
+        setError(t('avatar.error.removeFailed'));
       }
     });
   }

@@ -16,7 +16,7 @@
 import type { Therapist } from '@massage-tulum/shared';
 import { AlertTriangle, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useId, useRef, useTransition } from 'react';
+import { useEffect, useId, useRef, useState, useTransition } from 'react';
 import { setTherapistStatus } from '../../../../../actions/therapists';
 
 interface DeactivateTherapistDialogProps {
@@ -33,6 +33,7 @@ export function DeactivateTherapistDialog({
   const t = useTranslations('therapistRoster');
   const tCommon = useTranslations('common');
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const cancelRef = useRef<HTMLButtonElement | null>(null);
   const titleId = useId();
@@ -80,12 +81,14 @@ export function DeactivateTherapistDialog({
   }, []);
 
   function handleConfirm() {
+    setError(null);
     startTransition(async () => {
       const result = await setTherapistStatus(therapist.id, 'inactive');
       if (result.success) {
         onSuccess(result.data);
+      } else {
+        setError(t('deactivate.error'));
       }
-      // On error: keep dialog open — toast error is handled upstream by TherapistList
     });
   }
 
@@ -141,6 +144,19 @@ export function DeactivateTherapistDialog({
         >
           {t('deactivate.warning')}
         </p>
+
+        {/* Inline error (server-action failure) */}
+        {error && (
+          <p
+            role="alert"
+            className={[
+              'mt-3 text-sm font-medium text-danger-700',
+              'bg-danger-50 rounded-lg p-3 border-l-4 border-danger-500',
+            ].join(' ')}
+          >
+            {error}
+          </p>
+        )}
 
         {/* Footer */}
         <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
