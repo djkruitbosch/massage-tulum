@@ -45,6 +45,9 @@ declare const messages: {
       body: 'Por favor recarga la página.';
       reload: 'Recargar';
     };
+    form: {
+      requiredNote: 'Los campos marcados con * son obligatorios';
+    };
     day: {
       monday: 'Lunes';
       tuesday: 'Martes';
@@ -141,6 +144,7 @@ declare const messages: {
       };
       nav: {
         studioProfile: 'Perfil del estudio';
+        therapists: 'Terapeutas';
       };
     };
     signup: {
@@ -316,6 +320,115 @@ declare const messages: {
         value: '21 de marzo de 2025';
       };
     };
+  };
+  therapistRoster: {
+    page: {
+      title: 'Terapeutas';
+      subtitle: 'Gestiona el equipo de tu estudio';
+    };
+    action: {
+      addTherapist: 'Agregar terapeuta';
+      edit: 'Editar {name}';
+      deactivate: 'Desactivar {name}';
+      deactivateConfirm: 'Sí, desactivar';
+      reactivate: 'Reactivar {name}';
+      reactivateConfirm: 'Sí, reactivar';
+    };
+    modal: {
+      add: {
+        title: 'Agregar terapeuta';
+      };
+      edit: {
+        title: 'Editar terapeuta';
+      };
+    };
+    field: {
+      name: {
+        label: 'Nombre completo';
+        error: {
+          required: 'El nombre es obligatorio';
+        };
+      };
+      role: {
+        label: 'Rol o especialidad';
+        error: {
+          required: 'El rol es obligatorio';
+        };
+      };
+      phone: {
+        label: 'Teléfono';
+      };
+      email: {
+        label: 'Correo electrónico';
+        error: {
+          format: 'Ingresa un correo válido';
+        };
+      };
+      notes: {
+        label: 'Notas internas';
+        helper: 'Máximo 500 caracteres. Solo visibles para el estudio.';
+        charCount: '{count}/500';
+      };
+    };
+    deactivate: {
+      title: '¿Desactivar a {name}?';
+      body: 'El terapeuta no aparecerá en nuevas reservas.';
+      warning: 'Este terapeuta puede tener reservas próximas. Revisa tu agenda antes de desactivarlo.';
+    };
+    reactivate: {
+      title: '¿Reactivar a {name}?';
+      body: 'El terapeuta volverá a estar disponible para nuevas reservas.';
+    };
+    filter: {
+      active: 'Activos';
+      deactivated: 'Desactivados';
+      all: 'Todos';
+    };
+    list: {
+      label: 'Lista de terapeutas';
+    };
+    status: {
+      active: 'Activo';
+      deactivated: 'Desactivado';
+    };
+    loading: 'Cargando terapeutas';
+    empty: {
+      active: {
+        title: 'No hay terapeutas activos';
+        body: 'Agrega tu primer terapeuta para comenzar';
+      };
+      deactivated: {
+        title: 'Sin terapeutas desactivados';
+        body: 'Los terapeutas desactivados aparecerán aquí';
+      };
+    };
+    loadError: {
+      title: 'No se pudo cargar la lista';
+      body: 'Ocurrió un error al obtener los terapeutas.';
+      retry: 'Reintentar';
+    };
+    avatar: {
+      label: 'Foto de {name}';
+      uploadPhoto: 'Subir foto';
+      replacePhoto: 'Reemplazar foto';
+      removePhoto: 'Eliminar foto';
+      fileHint: 'PNG, JPG o WebP. Máximo 2 MB. Se recomienda formato cuadrado (1:1).';
+      fileInput: {
+        label: 'Seleccionar foto del terapeuta';
+      };
+      uploading: 'Subiendo foto...';
+      error: {
+        fileType: 'Tipo de archivo no válido. Usa PNG, JPG o WebP.';
+        fileSize: 'El archivo es demasiado grande. El máximo es 5 MB.';
+        uploadFailed: 'No se pudo subir la foto. Intenta de nuevo.';
+      };
+      undo: {
+        title: 'Foto eliminada';
+        description: 'La foto se eliminará al guardar.';
+        action: 'Deshacer';
+      };
+    };
+    privacyDisclosure: 'Al guardar, aceptas nuestro <privacyLink>Aviso de Privacidad</privacyLink> para el tratamiento de datos del terapeuta.';
   };
   studioProfile: {
     page: {
