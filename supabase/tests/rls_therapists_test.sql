@@ -8,7 +8,8 @@
 --   DELETE  — no DELETE policy; soft-delete via status='inactive' only (ADR-0013).
 --   anon    — blocked for all operations.
 --
--- Four test cases required per ADR-0013 and ADR-0003 Convention 3:
+-- Four test cases required per ADR-0013 and ADR-0003 Convention 3
+-- (in canonical ADR-0003 order):
 --   1. anon-read-blocked
 --   2. owner-read-allowed
 --   3. cross-owner-read-blocked
@@ -76,32 +77,39 @@ SELECT is_empty(
   'anon: cannot read any therapists rows'
 );
 
--- ─── Test 2: anon cannot INSERT into therapists ───────────────────────────────
-SELECT throws_ok(
-  $$ INSERT INTO public.therapists (studio_id, name, role)
-     VALUES ('eeeeeeee-0001-0000-0000-000000000000', 'Evil Therapist', 'Hacker') $$,
-  'new row violates row-level security policy for table "therapists"',
-  'anon: cannot insert into therapists'
-);
-
--- ─── Test 3: owner-A can SELECT only their own studio''s therapists (2 rows) ──
+-- ─── Test 2: owner-A can SELECT only their own studio''s therapists ───────────
+-- Matches rls_studios_test.sql pattern: results_eq with explicit UUID array.
 RESET role;
 SET LOCAL role = authenticated;
 SET LOCAL "request.jwt.claims" =
   '{"sub": "eeeeeeee-0000-0000-0000-000000000000", "role": "authenticated"}';
 
-SELECT is(
-  (SELECT count(*)::int FROM public.therapists
-   WHERE studio_id = 'eeeeeeee-0001-0000-0000-000000000000'),
-  2,
-  'owner-A: can read both therapists for own studio'
+SELECT results_eq(
+  $$ SELECT id FROM public.therapists
+     WHERE studio_id = 'eeeeeeee-0001-0000-0000-000000000000'
+     ORDER BY name $$,
+  ARRAY[
+    'eeeeeeee-0002-0000-0000-000000000000'::uuid,
+    'eeeeeeee-0003-0000-0000-000000000000'::uuid
+  ],
+  'owner-A: can read both own therapists (results_eq with explicit UUID array)'
 );
 
--- ─── Test 4: owner-A cannot read Studio B''s therapists (cross-owner blocked) ─
+-- ─── Test 3: owner-A cannot read Studio B''s therapists (cross-owner blocked) ─
 SELECT is_empty(
   $$ SELECT * FROM public.therapists
      WHERE studio_id = 'ffffffff-0001-0000-0000-000000000000' $$,
   'owner-A: cannot read cross-owner therapists'
+);
+
+-- ─── Test 4: anon cannot INSERT into therapists ───────────────────────────────
+RESET role;
+SET LOCAL role = anon;
+SELECT throws_ok(
+  $$ INSERT INTO public.therapists (studio_id, name, role)
+     VALUES ('eeeeeeee-0001-0000-0000-000000000000', 'Evil Therapist', 'Hacker') $$,
+  'new row violates row-level security policy for table "therapists"',
+  'anon: cannot insert into therapists'
 );
 
 SELECT * FROM finish();

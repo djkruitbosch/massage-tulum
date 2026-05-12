@@ -31,3 +31,16 @@ export type {
   StudioHoursEntry,
   StudioHours,
 } from './studio-profile.schema.js';
+
+export {
+  therapistSchema,
+  createTherapistSchema,
+  updateTherapistSchema,
+  setTherapistStatusSchema,
+} from './therapist.schema.js';
+export type {
+  Therapist,
+  CreateTherapistInput,
+  UpdateTherapistInput,
+  SetTherapistStatusInput,
+} from './therapist.schema.js';

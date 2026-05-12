@@ -43,7 +43,7 @@ VALUES (
   '10000000-0000-0000-0000-000000000001',
   'Ana Martinez',
   'Masajista Certificada',
-  '+529841234567',
+  '+529840000001',
   'active'
 ),
 (
