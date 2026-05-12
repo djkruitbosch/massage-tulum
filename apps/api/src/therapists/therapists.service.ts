@@ -518,7 +518,8 @@ export class TherapistsService {
       .createSignedUrl(path, SIGNED_URL_TTL);
 
     if (error || !data?.signedUrl) {
-      this.logger.warn(`Failed to generate signed URL for path: ${error?.message}`);
+      // Path is intentionally omitted from the log per architecture §9 (PII policy).
+      this.logger.warn(`Failed to generate signed URL (path omitted): ${error?.message}`);
       return null;
     }
 

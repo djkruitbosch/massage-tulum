@@ -487,6 +487,68 @@ describe('TherapistsService', () => {
         service.uploadTherapistPhoto(USER_ID, FAKE_JWT, THERAPIST_A_ID, fakeFile),
       ).rejects.toThrow(InternalServerErrorException);
     });
+
+    it('uploads a new photo, updates photo_url, deletes old photo, and returns signed URL (AC-9 replace path)', async () => {
+      adminSupabaseMock.from.mockReturnValue(
+        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
+      );
+
+      const oldPath = 'therapists/cccccccc-0001-0000-0000-000000000001/old.webp';
+      const currentRow = makeTherapistRow({ photo_url: oldPath });
+      // Row after update — photo_url will be the new path. Match it loosely; the
+      // service maps the row to a DTO with the freshly-generated signed URL.
+      const updatedRow = makeTherapistRow({ photo_url: 'therapists/x/new.webp' });
+
+      // SELECT current therapist row.
+      userClientMock.from
+        .mockReturnValueOnce({
+          select: jest.fn().mockReturnThis(),
+          eq: jest.fn().mockReturnThis(),
+          single: jest.fn().mockResolvedValue({ data: currentRow, error: null }),
+        })
+        // UPDATE photo_url.
+        .mockReturnValueOnce({
+          update: jest.fn().mockReturnThis(),
+          eq: jest.fn().mockReturnThis(),
+          select: jest.fn().mockReturnThis(),
+          single: jest.fn().mockResolvedValue({ data: updatedRow, error: null }),
+        });
+
+      const uploadMock = jest.fn().mockResolvedValue({ data: { path: 'x' }, error: null });
+      const removeMock = jest.fn().mockResolvedValue({ data: [], error: null });
+      const createSignedUrlMock = jest
+        .fn()
+        .mockResolvedValue({ data: { signedUrl: 'https://signed.example/new' }, error: null });
+      userClientMock.storage.from.mockReturnValue({
+        upload: uploadMock,
+        remove: removeMock,
+        createSignedUrl: createSignedUrlMock,
+      });
+
+      const minimalPng = Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        'base64',
+      );
+
+      const fakeFile = {
+        buffer: minimalPng,
+        mimetype: 'image/png',
+        size: minimalPng.length,
+      } as Express.Multer.File;
+
+      const result = await service.uploadTherapistPhoto(
+        USER_ID,
+        FAKE_JWT,
+        THERAPIST_A_ID,
+        fakeFile,
+      );
+
+      expect(uploadMock).toHaveBeenCalledTimes(1);
+      // The old path must be removed (best-effort cleanup, but the call MUST happen).
+      expect(removeMock).toHaveBeenCalledWith([oldPath]);
+      expect(createSignedUrlMock).toHaveBeenCalledTimes(1);
+      expect(result.photoUrl).toBe('https://signed.example/new');
+    });
   });
 
   // ─── removeTherapistPhoto ───────────────────────────────────────────────────
