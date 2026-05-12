@@ -81,19 +81,19 @@ export class TherapistsService {
     const studioId = await this.resolveStudioId(userId);
     const userClient = this.buildUserClient(jwt);
 
+    // Build query: apply status filter before order() to maintain a chainable pattern.
     let query = userClient
       .from('therapists')
       .select(
         'id, studio_id, name, role, phone, email, notes, photo_url, status, created_at, updated_at',
       )
-      .eq('studio_id', studioId)
-      .order('name', { ascending: true });
+      .eq('studio_id', studioId);
 
     if (status !== 'all') {
       query = query.eq('status', status);
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query.order('name', { ascending: true });
 
     if (error) {
       this.logger.error(`Failed to list therapists for studioId=${studioId}: ${error.message}`);
