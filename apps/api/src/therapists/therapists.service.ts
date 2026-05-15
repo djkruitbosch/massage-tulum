@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -9,7 +8,7 @@ import {
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { randomUUID } from 'crypto';
 import sharp from 'sharp';
-import { SUPABASE_CLIENT } from '../common/supabase/supabase.provider';
+import { StudioResolverService } from '../common/services/studio-resolver.service';
 import { CreateTherapistDto } from './dto/create-therapist.dto';
 import { UpdateTherapistDto } from './dto/update-therapist.dto';
 import { UpdateTherapistStatusDto } from './dto/update-therapist-status.dto';
@@ -39,12 +38,12 @@ const SIGNED_URL_TTL = 3600; // 1 hour
 /**
  * TherapistsService — CRUD, status toggle, and photo upload for therapists.
  *
- * Uses the service-role Supabase client for the studio_profiles lookup only.
+ * Studio ownership is resolved via StudioResolverService (shared provider).
  * All other reads/writes use a per-request user-scoped client (anon key + JWT)
  * so that RLS enforces studio ownership on every DB operation.
  *
  * studio_id is never accepted from the request body — always resolved from
- * the authenticated user's JWT sub claim via resolveStudioId().
+ * the authenticated user's JWT sub claim via StudioResolverService.
  *
  * PII policy: therapist name, phone, and email are never logged.
  * Log only therapistId and studioId (UUIDs) for correlation.
@@ -56,10 +55,7 @@ const SIGNED_URL_TTL = 3600; // 1 hour
 export class TherapistsService {
   private readonly logger = new Logger(TherapistsService.name);
 
-  constructor(
-    // Service-role client: used ONLY for the studio_profiles lookup.
-    @Inject(SUPABASE_CLIENT) private readonly adminSupabase: SupabaseClient,
-  ) {}
+  constructor(private readonly studioResolver: StudioResolverService) {}
 
   // ─── Public methods ──────────────────────────────────────────────────────────
 
@@ -78,7 +74,7 @@ export class TherapistsService {
     jwt: string,
     status: TherapistStatus = 'all',
   ): Promise<TherapistResponseDto[]> {
-    const studioId = await this.resolveStudioId(userId);
+    const studioId = await this.studioResolver.resolveStudioId(userId);
     const userClient = this.buildUserClient(jwt);
 
     // Build query: apply status filter before order() to maintain a chainable pattern.
@@ -123,7 +119,7 @@ export class TherapistsService {
     jwt: string,
     dto: CreateTherapistDto,
   ): Promise<TherapistResponseDto> {
-    const studioId = await this.resolveStudioId(userId);
+    const studioId = await this.studioResolver.resolveStudioId(userId);
     const userClient = this.buildUserClient(jwt);
 
     const insertPayload = {
@@ -177,7 +173,7 @@ export class TherapistsService {
       throw new BadRequestException('At least one field must be provided for update');
     }
 
-    const studioId = await this.resolveStudioId(userId);
+    const studioId = await this.studioResolver.resolveStudioId(userId);
     const userClient = this.buildUserClient(jwt);
 
     // Build update payload from only the provided fields.
@@ -235,7 +231,7 @@ export class TherapistsService {
     therapistId: string,
     dto: UpdateTherapistStatusDto,
   ): Promise<TherapistResponseDto> {
-    const studioId = await this.resolveStudioId(userId);
+    const studioId = await this.studioResolver.resolveStudioId(userId);
     const userClient = this.buildUserClient(jwt);
 
     const { data, error } = await userClient
@@ -289,7 +285,7 @@ export class TherapistsService {
     therapistId: string,
     file: Express.Multer.File,
   ): Promise<TherapistResponseDto> {
-    const studioId = await this.resolveStudioId(userId);
+    const studioId = await this.studioResolver.resolveStudioId(userId);
     const userClient = this.buildUserClient(jwt);
 
     // Fetch current row to (a) verify ownership and (b) get old photo_url for cleanup.
@@ -394,7 +390,7 @@ export class TherapistsService {
     jwt: string,
     therapistId: string,
   ): Promise<TherapistResponseDto> {
-    const studioId = await this.resolveStudioId(userId);
+    const studioId = await this.studioResolver.resolveStudioId(userId);
     const userClient = this.buildUserClient(jwt);
 
     // Fetch current row.
@@ -455,27 +451,6 @@ export class TherapistsService {
   }
 
   // ─── Private helpers ─────────────────────────────────────────────────────────
-
-  /**
-   * Resolves the studio_id for a given auth user via studio_profiles lookup.
-   *
-   * Uses service-role client so this lookup bypasses RLS — required because
-   * we need the studio_id before we can construct user-scoped queries.
-   */
-  private async resolveStudioId(userId: string): Promise<string> {
-    const { data, error } = await this.adminSupabase
-      .from('studio_profiles')
-      .select('studio_id')
-      .eq('id', userId)
-      .single();
-
-    if (error || !data) {
-      this.logger.warn(`No studio_profile found for userId=${userId}`);
-      throw new NotFoundException('Studio not found for this user');
-    }
-
-    return (data as { studio_id: string }).studio_id;
-  }
 
   /**
    * Creates a per-request user-scoped Supabase client (anon key + JWT).

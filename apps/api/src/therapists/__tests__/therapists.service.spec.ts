@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { TherapistsService } from '../therapists.service';
+import { StudioResolverService } from '../../common/services/studio-resolver.service';
 import { CreateTherapistDto } from '../dto/create-therapist.dto';
 import { UpdateTherapistDto } from '../dto/update-therapist.dto';
 import { UpdateTherapistStatusDto } from '../dto/update-therapist-status.dto';
@@ -15,8 +16,6 @@ const STUDIO_ID = 'bbbbbbbb-0001-0000-0000-000000000001';
 const THERAPIST_A_ID = 'cccccccc-0001-0000-0000-000000000001';
 const THERAPIST_B_ID = 'cccccccc-0002-0000-0000-000000000001';
 const FAKE_JWT = 'fake.jwt.token';
-
-const STUDIO_PROFILE_ROW = { studio_id: STUDIO_ID };
 
 const makeTherapistRow = (
   overrides: Partial<{
@@ -47,21 +46,11 @@ const makeTherapistRow = (
   ...overrides,
 });
 
-// ─── Mock Supabase chain builder ───────────────────────────────────────────────
-
-function buildAdminChain(resolvedValue: unknown) {
-  return {
-    select: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    single: jest.fn().mockResolvedValue(resolvedValue),
-  };
-}
-
 // ─── TherapistsService ────────────────────────────────────────────────────────
 
 describe('TherapistsService', () => {
   let service: TherapistsService;
-  let adminSupabaseMock: { from: jest.Mock };
+  let studioResolverMock: jest.Mocked<StudioResolverService>;
   let userClientMock: {
     from: jest.Mock;
     storage: {
@@ -73,7 +62,9 @@ describe('TherapistsService', () => {
     process.env['SUPABASE_URL'] = 'https://test.supabase.co';
     process.env['SUPABASE_ANON_KEY'] = 'test-anon-key';
 
-    adminSupabaseMock = { from: jest.fn() };
+    studioResolverMock = {
+      resolveStudioId: jest.fn().mockResolvedValue(STUDIO_ID),
+    } as unknown as jest.Mocked<StudioResolverService>;
 
     userClientMock = {
       from: jest.fn(),
@@ -82,9 +73,7 @@ describe('TherapistsService', () => {
       },
     };
 
-    service = new TherapistsService(
-      adminSupabaseMock as unknown as ConstructorParameters<typeof TherapistsService>[0],
-    );
+    service = new TherapistsService(studioResolverMock);
 
     jest
       .spyOn(service as unknown as { buildUserClient: () => unknown }, 'buildUserClient')
@@ -97,12 +86,12 @@ describe('TherapistsService', () => {
     jest.restoreAllMocks();
   });
 
-  // ─── resolveStudioId ────────────────────────────────────────────────────────
+  // ─── resolveStudioId (via StudioResolverService) ────────────────────────────
 
   describe('resolveStudioId (via listTherapists)', () => {
     it('throws NotFoundException when user has no studio_profile', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: null, error: { code: 'PGRST116' } }),
+      studioResolverMock.resolveStudioId.mockRejectedValueOnce(
+        new NotFoundException('Studio not found for this user'),
       );
 
       await expect(service.listTherapists(USER_ID, FAKE_JWT)).rejects.toThrow(NotFoundException);
@@ -113,10 +102,6 @@ describe('TherapistsService', () => {
 
   describe('listTherapists', () => {
     it('returns active therapists ordered by name', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const rows = [
         makeTherapistRow({ id: THERAPIST_A_ID, name: 'Ana', status: 'active' }),
         makeTherapistRow({ id: THERAPIST_B_ID, name: 'Carlos', status: 'inactive' }),
@@ -141,10 +126,6 @@ describe('TherapistsService', () => {
     });
 
     it('returns only inactive therapists when filter=inactive', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const rows = [makeTherapistRow({ id: THERAPIST_B_ID, name: 'Carlos', status: 'inactive' })];
 
       const queryMock = {
@@ -167,10 +148,6 @@ describe('TherapistsService', () => {
     });
 
     it('returns all therapists when filter=all', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const rows = [
         makeTherapistRow({ id: THERAPIST_A_ID, name: 'Ana', status: 'active' }),
         makeTherapistRow({ id: THERAPIST_B_ID, name: 'Carlos', status: 'inactive' }),
@@ -197,10 +174,6 @@ describe('TherapistsService', () => {
     });
 
     it('returns signed URLs for therapists that have a photo_url', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const photoPath = 'therapists/cccccccc-0001-0000-0000-000000000001/photo.webp';
       const rows = [makeTherapistRow({ id: THERAPIST_A_ID, photo_url: photoPath })];
 
@@ -226,10 +199,6 @@ describe('TherapistsService', () => {
     });
 
     it('throws InternalServerErrorException when DB query fails', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       userClientMock.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
@@ -246,10 +215,6 @@ describe('TherapistsService', () => {
 
   describe('createTherapist', () => {
     it('creates and returns a therapist', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const newRow = makeTherapistRow({
         id: THERAPIST_A_ID,
         name: 'Ana Martinez',
@@ -277,10 +242,6 @@ describe('TherapistsService', () => {
     });
 
     it('throws InternalServerErrorException when insert fails', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       userClientMock.from.mockReturnValue({
         insert: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -299,10 +260,6 @@ describe('TherapistsService', () => {
 
   describe('updateTherapist', () => {
     it('updates provided fields and returns updated therapist', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const updatedRow = makeTherapistRow({ name: 'Updated Name' });
 
       userClientMock.from.mockReturnValue({
@@ -331,10 +288,6 @@ describe('TherapistsService', () => {
     });
 
     it('throws NotFoundException when therapist not found (simulates cross-studio RLS denial)', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       userClientMock.from.mockReturnValue({
         update: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
@@ -354,10 +307,6 @@ describe('TherapistsService', () => {
 
   describe('updateTherapistStatus', () => {
     it('deactivates a therapist (active → inactive)', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const updatedRow = makeTherapistRow({ status: 'inactive' });
 
       userClientMock.from.mockReturnValue({
@@ -378,10 +327,6 @@ describe('TherapistsService', () => {
     });
 
     it('reactivates a therapist (inactive → active)', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const updatedRow = makeTherapistRow({ status: 'active' });
 
       userClientMock.from.mockReturnValue({
@@ -402,10 +347,6 @@ describe('TherapistsService', () => {
     });
 
     it('throws NotFoundException when therapist not found', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       userClientMock.from.mockReturnValue({
         update: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
@@ -425,10 +366,6 @@ describe('TherapistsService', () => {
 
   describe('uploadTherapistPhoto', () => {
     it('throws NotFoundException when therapist not found for upload', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       userClientMock.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
@@ -447,10 +384,6 @@ describe('TherapistsService', () => {
     });
 
     it('throws InternalServerErrorException when Storage upload fails', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const currentRow = makeTherapistRow({ photo_url: null });
 
       // First from() call: SELECT current therapist row.
@@ -489,10 +422,6 @@ describe('TherapistsService', () => {
     });
 
     it('uploads a new photo, updates photo_url, deletes old photo, and returns signed URL (AC-9 replace path)', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const oldPath = 'therapists/cccccccc-0001-0000-0000-000000000001/old.webp';
       const currentRow = makeTherapistRow({ photo_url: oldPath });
       // Row after update — photo_url will be the new path. Match it loosely; the
@@ -555,10 +484,6 @@ describe('TherapistsService', () => {
 
   describe('removeTherapistPhoto', () => {
     it('returns therapist with photoUrl=null when photo is already null (idempotent)', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const rowWithNoPhoto = makeTherapistRow({ photo_url: null });
 
       userClientMock.from.mockReturnValue({
@@ -573,10 +498,6 @@ describe('TherapistsService', () => {
     });
 
     it('removes photo and returns therapist with photoUrl=null', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const photoPath = 'therapists/cccccccc-0001-0000-0000-000000000001/old.webp';
       const rowWithPhoto = makeTherapistRow({ photo_url: photoPath });
       const rowWithNullPhoto = makeTherapistRow({ photo_url: null });
@@ -607,10 +528,6 @@ describe('TherapistsService', () => {
     });
 
     it('throws NotFoundException when therapist not found', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       userClientMock.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
@@ -623,10 +540,6 @@ describe('TherapistsService', () => {
     });
 
     it('continues (non-fatal) when Storage delete fails during photo removal', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildAdminChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const photoPath = 'therapists/cccccccc-0001-0000-0000-000000000001/old.webp';
       const rowWithPhoto = makeTherapistRow({ photo_url: photoPath });
       const rowWithNullPhoto = makeTherapistRow({ photo_url: null });

@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { StudiosProfileService } from '../studios-profile.service';
+import { StudioResolverService } from '../../common/services/studio-resolver.service';
 import { UpdateStudioProfileDto } from '../dto/update-studio-profile.dto';
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
@@ -22,8 +23,6 @@ const STUDIO_ROW = {
   updated_at: '2026-05-03T10:00:00.000Z',
 };
 
-const STUDIO_PROFILE_ROW = { studio_id: STUDIO_ID };
-
 const HOURS_ROWS = Array.from({ length: 7 }, (_, i) => ({
   weekday: i + 1,
   is_open: i === 0, // Monday open, rest closed
@@ -31,38 +30,22 @@ const HOURS_ROWS = Array.from({ length: 7 }, (_, i) => ({
   close_time: i === 0 ? '21:00:00' : null,
 }));
 
-// ─── Mock builder ─────────────────────────────────────────────────────────────
-
-function buildMockSupabaseChain(resolvedValue: unknown) {
-  const chain = {
-    select: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    single: jest.fn().mockResolvedValue(resolvedValue),
-    order: jest.fn().mockReturnThis(),
-    update: jest.fn().mockReturnThis(),
-    rpc: jest.fn().mockResolvedValue({ error: null }),
-  };
-  return chain;
-}
-
 // ─── StudiosProfileService ────────────────────────────────────────────────────
 
 describe('StudiosProfileService', () => {
   let service: StudiosProfileService;
-  let adminSupabaseMock: {
-    from: jest.Mock;
-  };
+  let studioResolverMock: jest.Mocked<StudioResolverService>;
 
   beforeEach(() => {
     // Set env vars needed by buildUserClient.
     process.env['SUPABASE_URL'] = 'https://test.supabase.co';
     process.env['SUPABASE_ANON_KEY'] = 'test-anon-key';
 
-    adminSupabaseMock = { from: jest.fn() };
+    studioResolverMock = {
+      resolveStudioId: jest.fn().mockResolvedValue(STUDIO_ID),
+    } as unknown as jest.Mocked<StudioResolverService>;
 
-    service = new StudiosProfileService(
-      adminSupabaseMock as unknown as ConstructorParameters<typeof StudiosProfileService>[0],
-    );
+    service = new StudiosProfileService(studioResolverMock);
   });
 
   afterEach(() => {
@@ -75,8 +58,8 @@ describe('StudiosProfileService', () => {
 
   describe('resolveStudioId (via getMyProfile)', () => {
     it('throws NotFoundException when user has no studio_profile', async () => {
-      adminSupabaseMock.from.mockReturnValue(
-        buildMockSupabaseChain({ data: null, error: { code: 'PGRST116' } }),
+      studioResolverMock.resolveStudioId.mockRejectedValueOnce(
+        new NotFoundException('Studio not found for this user'),
       );
 
       await expect(service.getMyProfile(USER_ID, FAKE_JWT)).rejects.toThrow(NotFoundException);
@@ -87,11 +70,6 @@ describe('StudiosProfileService', () => {
 
   describe('getMyProfile', () => {
     it('returns studio profile with trimmed time strings', async () => {
-      // Admin client: studio_profiles lookup
-      adminSupabaseMock.from.mockReturnValueOnce(
-        buildMockSupabaseChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       // Spy on buildUserClient to return a mock user-scoped client
       const userClientMock = {
         from: jest.fn(),
@@ -131,10 +109,6 @@ describe('StudiosProfileService', () => {
     });
 
     it('throws NotFoundException when studio row is not found', async () => {
-      adminSupabaseMock.from.mockReturnValueOnce(
-        buildMockSupabaseChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const userClientMock = { from: jest.fn() };
       jest
         .spyOn(service as unknown as { buildUserClient: () => unknown }, 'buildUserClient')
@@ -150,10 +124,6 @@ describe('StudiosProfileService', () => {
     });
 
     it('throws InternalServerErrorException when hours query fails', async () => {
-      adminSupabaseMock.from.mockReturnValueOnce(
-        buildMockSupabaseChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const userClientMock = { from: jest.fn() };
       jest
         .spyOn(service as unknown as { buildUserClient: () => unknown }, 'buildUserClient')
@@ -183,10 +153,6 @@ describe('StudiosProfileService', () => {
     it('throws BadRequestException when patch would leave no contact method', async () => {
       const studioWithNoContact = { ...STUDIO_ROW, phone: null, email: null };
 
-      adminSupabaseMock.from.mockReturnValueOnce(
-        buildMockSupabaseChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const userClientMock = { from: jest.fn() };
       jest
         .spyOn(service as unknown as { buildUserClient: () => unknown }, 'buildUserClient')
@@ -210,10 +176,6 @@ describe('StudiosProfileService', () => {
       // This case is covered by DTO MinLength(1) on name, but service also checks
       // after merge. We test via a case where dto.name would somehow bypass DTO.
       const studioRow = { ...STUDIO_ROW };
-
-      adminSupabaseMock.from.mockReturnValueOnce(
-        buildMockSupabaseChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
 
       const userClientMock = { from: jest.fn() };
       jest
@@ -239,11 +201,10 @@ describe('StudiosProfileService', () => {
     });
 
     it('updates only the provided fields and returns refreshed profile', async () => {
-      // Arrange: two admin lookups (resolve + post-update refresh)
-      adminSupabaseMock.from
-        .mockReturnValueOnce(buildMockSupabaseChain({ data: STUDIO_PROFILE_ROW, error: null }))
-        // second call for the internal getMyProfile at the end
-        .mockReturnValueOnce(buildMockSupabaseChain({ data: STUDIO_PROFILE_ROW, error: null }));
+      // Arrange: second resolveStudioId call for the internal getMyProfile at the end
+      studioResolverMock.resolveStudioId
+        .mockResolvedValueOnce(STUDIO_ID) // first call: patchMyProfile
+        .mockResolvedValueOnce(STUDIO_ID); // second call: internal getMyProfile
 
       const userClientMock = { from: jest.fn() };
       jest
@@ -283,10 +244,6 @@ describe('StudiosProfileService', () => {
     });
 
     it('throws InternalServerErrorException when studios UPDATE fails', async () => {
-      adminSupabaseMock.from.mockReturnValueOnce(
-        buildMockSupabaseChain({ data: STUDIO_PROFILE_ROW, error: null }),
-      );
-
       const userClientMock = { from: jest.fn() };
       jest
         .spyOn(service as unknown as { buildUserClient: () => unknown }, 'buildUserClient')
