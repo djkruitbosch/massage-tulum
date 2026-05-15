@@ -145,6 +145,7 @@ declare const messages: {
       nav: {
         studioProfile: 'Perfil del estudio';
         therapists: 'Terapeutas';
+        services: 'Servicios';
       };
     };
     signup: {
@@ -433,6 +434,119 @@ declare const messages: {
       };
     };
     privacyDisclosure: 'Al guardar, aceptas nuestro <privacyLink>Aviso de Privacidad</privacyLink> para el tratamiento de datos del terapeuta.';
+  };
+  serviceCatalog: {
+    page: {
+      title: 'Catálogo de servicios';
+      subtitle: 'Define los servicios que ofrece tu estudio';
+    };
+    action: {
+      addService: 'Agregar servicio';
+      edit: 'Editar {name}';
+      deactivate: 'Desactivar {name}';
+      deactivateConfirm: 'Sí, desactivar';
+      reactivate: 'Reactivar {name}';
+      reactivateConfirm: 'Sí, reactivar';
+    };
+    modal: {
+      add: {
+        title: 'Agregar servicio';
+      };
+      edit: {
+        title: 'Editar servicio';
+      };
+    };
+    field: {
+      name: {
+        label: 'Nombre del servicio';
+        error: {
+          required: 'El nombre del servicio es obligatorio';
+          tooLong: 'El nombre no puede exceder 120 caracteres';
+        };
+      };
+      category: {
+        label: 'Categoría';
+        helper: 'Selecciona una existente o escribe una nueva';
+        createOption: 'Crear "{value}"';
+        noOptions: 'Sin categorías previas';
+        error: {
+          tooLong: 'La categoría no puede exceder 60 caracteres';
+        };
+      };
+      description: {
+        label: 'Descripción';
+        error: {
+          tooLong: 'La descripción no puede exceder 1000 caracteres';
+        };
+      };
+      duration: {
+        label: 'Duración';
+        unit: 'min';
+        custom: 'Personalizada…';
+        customLabel: 'Duración personalizada (minutos)';
+        error: {
+          required: 'La duración es obligatoria';
+          min: 'La duración debe ser de al menos 1 minuto';
+          max: 'La duración máxima es 480 minutos (8 horas)';
+        };
+      };
+      price: {
+        label: 'Precio base';
+        helper: 'En pesos mexicanos (MXN). Ingresa 0 para servicios gratuitos.';
+        error: {
+          required: 'El precio es obligatorio';
+          min: 'El precio no puede ser negativo';
+        };
+      };
+    };
+    deactivate: {
+      title: '¿Desactivar "{name}"?';
+      body: 'El servicio no aparecerá disponible para nuevas reservas.';
+      hasBookings: 'Este servicio tiene {count} reservas próximas. Desactivarlo no cancelará esas reservas.';
+    };
+    reactivate: {
+      title: '¿Reactivar "{name}"?';
+      body: 'El servicio volverá a estar disponible para nuevas reservas.';
+    };
+    filter: {
+      groupLabel: 'Filtrar por estado';
+      active: 'Activos';
+      inactive: 'Desactivados';
+      all: 'Todos';
+    };
+    list: {
+      label: 'Lista de servicios';
+    };
+    status: {
+      active: 'Activo';
+      inactive: 'Desactivado';
+    };
+    loading: 'Cargando servicios';
+    empty: {
+      active: {
+        title: 'No hay servicios activos';
+        body: 'Agrega tu primer servicio para comenzar';
+      };
+      deactivated: {
+        title: 'Sin servicios desactivados';
+        body: 'Los servicios desactivados aparecerán aquí';
+      };
+    };
+    loadError: {
+      title: 'No se pudo cargar el catálogo';
+      body: 'Ocurrió un error al obtener los servicios.';
+      retry: 'Reintentar';
+    };
+    toast: {
+      created: 'Servicio creado correctamente.';
+      updated: 'Servicio actualizado correctamente.';
+      deactivated: 'Servicio desactivado.';
+      reactivated: 'Servicio reactivado.';
+    };
+    duration: {
+      format: '{n} min';
+      formatHours: '{h} h {m} min';
+    };
   };
   studioProfile: {
     page: {

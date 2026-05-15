@@ -15,7 +15,7 @@
  * Ticket: CU-869d4za67
  */
 
-import { LayoutGrid, UserCircle, Users } from 'lucide-react';
+import { LayoutGrid, ShoppingBag, UserCircle, Users } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { createClient } from '../../../utils/supabase/server';
@@ -116,6 +116,20 @@ export default async function DashboardPage() {
               >
                 <Users size={16} className="text-neutral-500" aria-hidden="true" />
                 {tDashboard('nav.therapists')}
+              </a>
+              <a
+                href={locale === 'en' ? '/en/studio/services' : '/studio/services'}
+                className={[
+                  'inline-flex items-center gap-2 rounded-lg border border-neutral-200',
+                  'bg-white px-4 py-2.5 text-sm font-medium text-neutral-700',
+                  'hover:bg-neutral-50 hover:border-neutral-300',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600',
+                  'focus-visible:ring-offset-2',
+                  'motion-safe:transition-colors motion-safe:duration-150',
+                ].join(' ')}
+              >
+                <ShoppingBag size={16} className="text-neutral-500" aria-hidden="true" />
+                {tDashboard('nav.services')}
               </a>
             </nav>
 
