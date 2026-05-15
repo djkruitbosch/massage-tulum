@@ -16,8 +16,8 @@ import { Footer } from './_components/footer';
  * These will be replaced with a dedicated LanguageSwitcher Client Component in
  * a follow-up ticket once the packages/ui component library is scaffolded.
  *
- * The CTA button is disabled — it has no destination in the Foundation sprint.
- * It will be wired to the login/onboarding flow when the auth feature ships.
+ * The hero CTA links to the studio self-signup form (locale-aware href, same
+ * convention as the Footer privacy link).
  *
  * See: docs/design/foundation-home.md
  */
@@ -113,21 +113,18 @@ export default async function HomePage({ params }: HomePageProps) {
                 {tHome('hero.subtitle')}
               </p>
 
-              {/* CTA Button — disabled placeholder, no destination yet */}
-              {/* TODO: wire to login/onboarding route once auth feature ships */}
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
+              {/* CTA — links to studio self-signup. Locale-aware href mirrors Footer. */}
+              <a
+                href={locale === 'en' ? '/en/signup' : '/signup'}
                 className={
-                  'mt-8 w-full rounded-lg bg-brand-700 px-6 py-3 text-base font-medium text-white sm:w-auto ' +
-                  'disabled:cursor-not-allowed disabled:opacity-50 ' +
+                  'mt-8 inline-flex w-full items-center justify-center rounded-lg bg-brand-700 px-6 py-3 text-base font-medium text-white sm:w-auto ' +
+                  'hover:bg-brand-600 active:bg-brand-800 ' +
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 ' +
                   'motion-safe:transition-colors motion-safe:duration-[150ms] motion-safe:ease-out'
                 }
               >
                 {tHome('hero.cta')}
-              </button>
+              </a>
             </div>
           </div>
         </main>
