@@ -47,3 +47,17 @@ export type {
   UpdateTherapistInput,
   SetTherapistStatusInput,
 } from './therapist.schema.js';
+
+// Service catalog schemas (CU-869d29f21).
+export {
+  serviceResponseSchema,
+  createServiceSchema,
+  updateServiceSchema,
+  futureBookingsCountSchema,
+} from './service.schema.js';
+export type {
+  ServiceResponse,
+  CreateServiceInput,
+  UpdateServiceInput,
+  FutureBookingsCount,
+} from './service.schema.js';
