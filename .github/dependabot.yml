@@ -66,3 +66,36 @@ updates:
         update-types:
           - "minor"
           - "patch"
+
+  # GitHub Actions runners run JavaScript actions on Node.js. GitHub deprecated
+  # Node 20 actions on 2025-09-19 and will force Node 24 in June 2026. Without
+  # Dependabot watching this ecosystem the warnings accumulate silently — see
+  # the "Node.js 20 actions are deprecated" warning that started appearing in
+  # CI logs once `actions/checkout@v4`, `actions/setup-node@v4`,
+  # `actions/cache@v4`, and `pnpm/action-setup@v4` released v5+/v6+ majors.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 5
+    target-branch: "main"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "ci"
+    # Same policy as npm: only group minor+patch so each major lands as its
+    # own PR and can be evaluated individually (action major bumps frequently
+    # introduce input/behavior changes — actions/cache v5 changed cache key
+    # handling, pnpm/action-setup v6 dropped older Node versions, etc.).
+    groups:
+      github-actions-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
