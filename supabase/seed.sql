@@ -63,3 +63,62 @@ VALUES (
   'inactive'
 )
 ON CONFLICT (id) DO NOTHING;
+
+-- ─── Service Catalog seed (CU-869d29f21) ──────────────────────────────────────
+-- Adds 5 sample services for the test studio created above.
+-- IDs use aaaa1111-* prefix for easy identification in dev tools.
+-- Covers: 2 active+category, 1 active no-category, 1 inactive+category, 1 complimentary.
+
+INSERT INTO public.services (id, studio_id, name, description, category, duration_minutes, base_price_mxn, status)
+VALUES
+  (
+    'aaaa1111-0000-0000-0000-000000000001',
+    '10000000-0000-0000-0000-000000000001',
+    'Masaje Relajante',
+    'Masaje de cuerpo completo con aceites esenciales para aliviar el estrés.',
+    'Relajación',
+    60,
+    800,
+    'active'
+  ),
+  (
+    'aaaa1111-0000-0000-0000-000000000002',
+    '10000000-0000-0000-0000-000000000001',
+    'Masaje de Tejido Profundo',
+    'Técnica terapéutica enfocada en capas musculares profundas para aliviar tensión crónica.',
+    'Terapéutico',
+    90,
+    1200,
+    'active'
+  ),
+  (
+    'aaaa1111-0000-0000-0000-000000000003',
+    '10000000-0000-0000-0000-000000000001',
+    'Masaje con Piedras Calientes',
+    'Piedras volcánicas calientes colocadas estratégicamente para relajar músculos profundos.',
+    NULL,
+    75,
+    950,
+    'active'
+  ),
+  (
+    'aaaa1111-0000-0000-0000-000000000004',
+    '10000000-0000-0000-0000-000000000001',
+    'Reflexología de Pies',
+    'Técnica de presión aplicada en puntos reflejos del pie para mejorar circulación.',
+    'Terapéutico',
+    45,
+    600,
+    'inactive'
+  ),
+  (
+    'aaaa1111-0000-0000-0000-000000000005',
+    '10000000-0000-0000-0000-000000000001',
+    'Consulta de Bienvenida',
+    'Sesión gratuita de 15 minutos para evaluar necesidades del cliente.',
+    'Relajación',
+    15,
+    0,
+    'active'
+  )
+ON CONFLICT (id) DO NOTHING;
