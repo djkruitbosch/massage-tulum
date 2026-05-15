@@ -114,8 +114,33 @@ export async function getMyTherapists(
         cache: 'no-store',
       },
     );
-  } catch {
+  } catch (err) {
+    // DIAGNOSTIC: surfaced reachability failure (DNS, TLS, ECONNREFUSED).
+    // Token NEVER logged. Remove once the /studio/therapists redirect bug is closed.
+    console.error(
+      '[diagnostic getMyTherapists] fetch threw: %s',
+      err instanceof Error ? err.message : String(err),
+    );
     return { success: false, error: 'server_error' };
+  }
+
+  // DIAGNOSTIC: log non-2xx responses so we can tell apart token rejection
+  // (401 + JsonWebTokenError vs TokenExpiredError in body) from other errors.
+  // First ~200 chars of the BE body only — Nest error responses are short and
+  // contain no PII. Token is NEVER logged. Remove once the bug is closed.
+  if (!res.ok) {
+    let bodySnippet = '<unreadable>';
+    try {
+      bodySnippet = (await res.clone().text()).slice(0, 200);
+    } catch {
+      /* ignore body read errors */
+    }
+    console.error(
+      '[diagnostic getMyTherapists] status=%d url=%s body=%s',
+      res.status,
+      res.url,
+      bodySnippet,
+    );
   }
 
   if (res.status === 401) return { success: false, error: 'unauthenticated' };
