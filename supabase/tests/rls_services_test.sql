@@ -92,8 +92,8 @@ SELECT results_eq(
      ORDER BY name $$,
   ARRAY[
     '11111111-0004-0000-0000-000000000000'::uuid,
-    '11111111-0002-0000-0000-000000000000'::uuid,
-    '11111111-0003-0000-0000-000000000000'::uuid
+    '11111111-0003-0000-0000-000000000000'::uuid,
+    '11111111-0002-0000-0000-000000000000'::uuid
   ],
   'owner-A: can read all own studio''s services (results_eq with explicit UUID array)'
 );
@@ -136,15 +136,19 @@ SELECT throws_ok(
 );
 
 -- ─── Test 7: owner-A cannot UPDATE studio-B''s services ───────────────────────
+-- data-modifying WITH cannot be nested inside SELECT, so capture into a temp table first.
+CREATE TEMP TABLE _svc_upd_result AS
+  UPDATE public.services SET name = 'Hacked'
+  WHERE studio_id = '22222222-0001-0000-0000-000000000000'
+  RETURNING id;
+
 SELECT is(
-  (WITH upd AS (
-    UPDATE public.services SET name = 'Hacked'
-    WHERE studio_id = '22222222-0001-0000-0000-000000000000'
-    RETURNING id
-  ) SELECT count(*)::int FROM upd),
+  (SELECT count(*)::int FROM _svc_upd_result),
   0,
   'owner-A: cannot update cross-studio services'
 );
+
+DROP TABLE _svc_upd_result;
 
 SELECT * FROM finish();
 ROLLBACK;
