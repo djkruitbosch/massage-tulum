@@ -142,20 +142,20 @@ SELECT throws_ok(
 );
 
 -- ─── Test 7: owner-A cannot UPDATE studio-B''s services ───────────────────────
--- data-modifying WITH cannot be nested inside SELECT is() in Postgres.
--- Capture the UPDATE RETURNING result into a temp table first, then assert count = 0.
-CREATE TEMP TABLE _svc_upd_result AS
+-- Use a top-level data-modifying CTE: WITH ... AS (UPDATE ... RETURNING)
+-- then aggregate in the outer SELECT. This avoids nesting DML inside a subquery
+-- (which Postgres disallows) and avoids CREATE TABLE AS UPDATE (also unsupported).
+WITH upd AS (
   UPDATE public.services SET name = 'Hacked'
   WHERE studio_id = '22222222-0001-0000-0000-000000000000'
-  RETURNING id;
-
+  RETURNING id
+)
 SELECT is(
-  (SELECT count(*)::int FROM _svc_upd_result),
+  count(*)::int,
   0,
   'owner-A: cannot update cross-studio services'
-);
-
-DROP TABLE _svc_upd_result;
+)
+FROM upd;
 
 SELECT * FROM finish();
 ROLLBACK;
