@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger';
  * DTO for PATCH /api/studios/therapists/:id/status.
  *
  * Accepts only 'active' or 'inactive'. Other status transitions are not
- * exposed via the API in v1 (ADR-0013 soft-delete pattern).
+ * exposed via the API in v1 (ADR-0011 soft-delete pattern).
  *
  * See: docs/architecture/CU-869d29f1p-therapist-roster.md §4f
  */

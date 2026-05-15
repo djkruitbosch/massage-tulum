@@ -23,7 +23,7 @@ import { StudioResolverModule } from '../common/services/studio-resolver.module'
  * user-scoped client (RLS enforced). File never touches disk (Multer memory).
  *
  * See: docs/architecture/CU-869d29f1p-therapist-roster.md §4
- *      docs/adr/0013-studio-scoped-resource-pattern.md
+ *      docs/adr/0011-studio-scoped-resource-pattern.md
  */
 @Module({
   imports: [StudioResolverModule],
