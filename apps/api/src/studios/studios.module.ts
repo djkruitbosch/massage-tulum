@@ -7,6 +7,7 @@ import { AdminGuard } from './guards/admin.guard';
 import { SupabaseJwtGuard } from '../common/guards/supabase-jwt.guard';
 import { BrevoService } from '../common/brevo/brevo.service';
 import { supabaseProvider } from '../common/supabase/supabase.provider';
+import { StudioResolverModule } from '../common/services/studio-resolver.module';
 
 /**
  * StudiosModule — self-signup, admin approval/rejection, and studio management.
@@ -24,6 +25,7 @@ import { supabaseProvider } from '../common/supabase/supabase.provider';
  *      docs/adr/0008-studio-onboarding-self-signup.md
  */
 @Module({
+  imports: [StudioResolverModule],
   controllers: [StudiosController, StudiosProfileController],
   providers: [
     StudiosService,
