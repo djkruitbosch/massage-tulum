@@ -30,13 +30,35 @@ export type MagicLinkResult =
   | { success: false; error: 'too_many_requests' | 'generic_error' };
 
 /**
+ * Returns `next` if it is a safe same-origin path, else `null`.
+ * Rejects protocol-relative URLs (`//evil.com`) and backslash tricks
+ * (`/\evil.com`) that some browsers parse as cross-origin.
+ */
+function sanitizeNextPath(next: string | undefined): string | null {
+  if (typeof next !== 'string' || next.length === 0) return null;
+  if (!next.startsWith('/')) return null;
+  if (next.startsWith('//')) return null;
+  if (next.startsWith('/\\')) return null;
+  return next;
+}
+
+/**
  * Request a magic-link for the given email.
  *
  * @param email - The studio owner's email address.
  * @param locale - The current UI locale ('es' | 'en') — passed to the email
  *                 template via options.data so it can render in the right language.
+ * @param next  - Optional same-origin path to redirect to after sign-in
+ *                 (e.g. `/en/studio/therapists`). Set by middleware route
+ *                 protection on the `?next=` query param of the login URL.
+ *                 Falls back to `/dashboard` (locale-prefixed) when missing
+ *                 or unsafe.
  */
-export async function requestMagicLink(email: string, locale: string): Promise<MagicLinkResult> {
+export async function requestMagicLink(
+  email: string,
+  locale: string,
+  next?: string,
+): Promise<MagicLinkResult> {
   const headersList = await headers();
   const origin =
     (headersList.get('origin') ?? headersList.get('x-forwarded-proto'))
@@ -46,7 +68,9 @@ export async function requestMagicLink(email: string, locale: string): Promise<M
   // emailRedirectTo always points to /auth/callback (no locale prefix).
   // The auth callback handler reads the `next` param for the final destination.
   // Supabase constructs the magic-link URL using this as the callback base.
-  const emailRedirectTo = `${origin}/auth/callback?next=${locale === 'en' ? '/en' : ''}/dashboard`;
+  const safeNext = sanitizeNextPath(next);
+  const destination = safeNext ?? `${locale === 'en' ? '/en' : ''}/dashboard`;
+  const emailRedirectTo = `${origin}/auth/callback?next=${encodeURIComponent(destination)}`;
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
