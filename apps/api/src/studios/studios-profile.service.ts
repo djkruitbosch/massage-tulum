@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -8,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
-import { SUPABASE_CLIENT } from '../common/supabase/supabase.provider';
+import { StudioResolverService } from '../common/services/studio-resolver.service';
 import { UpdateStudioProfileDto } from './dto/update-studio-profile.dto';
 import { trimTime } from '@massage-tulum/shared';
 
@@ -54,15 +53,9 @@ export interface StudioProfileResponse {
 /**
  * StudiosProfileService — GET and PATCH for the studio owner's profile.
  *
- * Uses the service-role Supabase client (admin-level insert/lookup) for
- * fetching the studio_id from studio_profiles, then uses a per-request
- * user-scoped client (anon key + JWT) for RLS-enforced reads/writes on
- * studios and studio_hours.
- *
- * Design note: The service-role client is used only for the
- * studio_profiles lookup (to find which studio_id belongs to the caller).
- * All subsequent reads and writes use the user-scoped client so RLS
- * governs access — belt-and-suspenders on top of the app-layer auth.
+ * Studio ownership is resolved via StudioResolverService (shared provider).
+ * All other reads/writes use a per-request user-scoped client (anon key + JWT)
+ * for RLS-enforced reads/writes on studios and studio_hours.
  *
  * See: docs/architecture/CU-869d29f1h-studio-profile.md §3
  *      docs/adr/0003-rls-baseline-conventions.md §Convention 4
@@ -71,10 +64,7 @@ export interface StudioProfileResponse {
 export class StudiosProfileService {
   private readonly logger = new Logger(StudiosProfileService.name);
 
-  constructor(
-    // Service-role client: used only for studio_profiles lookup.
-    @Inject(SUPABASE_CLIENT) private readonly adminSupabase: SupabaseClient,
-  ) {}
+  constructor(private readonly studioResolver: StudioResolverService) {}
 
   /**
    * Creates a per-request user-scoped Supabase client (anon key + JWT).
@@ -103,34 +93,13 @@ export class StudiosProfileService {
   }
 
   /**
-   * Resolves the studio_id for a given auth user (from studio_profiles).
-   *
-   * Uses service-role client so this lookup is not RLS-restricted.
-   * Returns NotFoundException if the user has no associated studio.
-   */
-  private async resolveStudioId(userId: string): Promise<string> {
-    const { data, error } = await this.adminSupabase
-      .from('studio_profiles')
-      .select('studio_id')
-      .eq('id', userId)
-      .single();
-
-    if (error || !data) {
-      this.logger.warn(`No studio_profile found for userId=${userId}`);
-      throw new NotFoundException('Studio not found for this user');
-    }
-
-    return (data as { studio_id: string }).studio_id;
-  }
-
-  /**
    * GET /api/studios/me — returns the authenticated studio owner's profile.
    *
    * @param userId  The auth.uid() from the verified JWT sub claim.
    * @param jwt     Raw JWT string for user-scoped Supabase client.
    */
   async getMyProfile(userId: string, jwt: string): Promise<StudioProfileResponse> {
-    const studioId = await this.resolveStudioId(userId);
+    const studioId = await this.studioResolver.resolveStudioId(userId);
     const userClient = this.buildUserClient(jwt);
 
     // Fetch studio row (RLS enforces ownership).
@@ -183,7 +152,7 @@ export class StudiosProfileService {
     jwt: string,
     dto: UpdateStudioProfileDto,
   ): Promise<StudioProfileResponse> {
-    const studioId = await this.resolveStudioId(userId);
+    const studioId = await this.studioResolver.resolveStudioId(userId);
     const userClient = this.buildUserClient(jwt);
 
     // Fetch current state to validate business rules against merged data.

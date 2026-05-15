@@ -31,3 +31,35 @@ ON CONFLICT (id) DO NOTHING;
 --
 -- For CI pgTAP tests, the FK is disabled in the test transactions — see
 -- supabase/tests/rls_studios_test.sql and rls_studio_profiles_test.sql.
+
+-- ─── Therapist Roster seed (CU-869d8k3wb) ─────────────────────────────────────
+-- Adds 3 therapists for the test studio created above.
+-- photo_url is null for all seed therapists — photos are uploaded via the UI.
+-- Requires the studios row above to exist (ON CONFLICT DO NOTHING handles reruns).
+
+INSERT INTO public.therapists (id, studio_id, name, role, phone, status)
+VALUES (
+  '20000000-0000-0000-0000-000000000001',
+  '10000000-0000-0000-0000-000000000001',
+  'Ana Martinez',
+  'Masajista Certificada',
+  '+529840000001',
+  'active'
+),
+(
+  '20000000-0000-0000-0000-000000000002',
+  '10000000-0000-0000-0000-000000000001',
+  'Carlos Reyes',
+  'Terapeuta de Tejido Profundo',
+  NULL,
+  'active'
+),
+(
+  '20000000-0000-0000-0000-000000000003',
+  '10000000-0000-0000-0000-000000000001',
+  'Sofia Herrera',
+  'Experta en Masaje Tailandes',
+  NULL,
+  'inactive'
+)
+ON CONFLICT (id) DO NOTHING;

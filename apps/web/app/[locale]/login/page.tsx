@@ -29,7 +29,7 @@ interface LoginPageProps {
 
 export default async function LoginPage({ params, searchParams }: LoginPageProps) {
   await params;
-  const { error } = await searchParams;
+  const { error, next } = await searchParams;
   const locale = await getLocale();
 
   const tLayout = await getTranslations('layout');
@@ -115,7 +115,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
               </h1>
               <p className="text-sm text-neutral-500 mb-6">{tLogin('subtitle')}</p>
 
-              <LoginForm initialError={initialError} locale={locale} />
+              <LoginForm initialError={initialError} locale={locale} next={next} />
             </div>
           </div>
         </main>

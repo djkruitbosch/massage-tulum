@@ -197,6 +197,42 @@ ClickUp is the **audit trail and human interface**. It is not the orchestration 
 
 ---
 
+## Vault capture (end of session)
+
+After completing work in a session, in addition to updating ClickUp:
+
+1. Append a brief entry to `~/Vaults/DJ-Vault/01-Daily/YYYY-MM-DD.md`
+   under a heading `### Claude Code session: massage-tulum`:
+   - 1-2 sentences on what was worked on
+   - Links to ClickUp tickets touched (e.g. `[[CU-1234]]`)
+   - Links to ADRs created (e.g. `[[ADR-0007]]`)
+   - One sentence on "what surprised me" or "what I learned" — if anything
+   - Skip the entry entirely if nothing notable happened
+
+2. If during the session you learned something that's *cross-project*
+   (a pattern that applies beyond Massage Tulum — like multi-agent
+   orchestration, NestJS conventions, Supabase patterns), propose adding
+   it to `~/Vaults/DJ-Vault/50-Areas/<topic>.md`. ASK before writing.
+
+3. If during the session you made a *strategic or business* decision
+   (not technical — pricing, target customer, vendor choice for reasons
+   beyond code), propose writing it to
+   `~/Vaults/DJ-Vault/40-Personal-Projects/Massage-Tulum/<topic>.md`.
+   ASK before writing.
+
+ALWAYS ASK before writing to the vault. Never auto-create vault content.
+
+The vault is for cross-project knowledge, strategic decisions, and
+ongoing personal learning. Code-repo `docs/` remains the source of
+truth for technical decisions specific to this project.
+
+Use the `obsidian:*` MCP tools (already configured at user scope) to
+write to the vault. If those tools aren't available in the session,
+mention it and skip the vault step rather than writing files directly
+in the vault filesystem.
+
+---
+
 ## Documentation rules
 
 - **ADRs** (`docs/adr/NNNN-title.md`) for any architectural decision: tech choices, schema design, integration patterns. Once accepted, ADRs are immutable. Supersede with a new ADR.

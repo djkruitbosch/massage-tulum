@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { HealthModule } from './health/health.module';
 import { StudiosModule } from './studios/studios.module';
+import { TherapistsModule } from './therapists/therapists.module';
 
 /**
  * AppModule — root module.
@@ -25,6 +26,7 @@ import { StudiosModule } from './studios/studios.module';
     ]),
     HealthModule,
     StudiosModule,
+    TherapistsModule,
   ],
 })
 export class AppModule {}

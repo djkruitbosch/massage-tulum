@@ -42,6 +42,9 @@
       "body": "Please reload the page.",
       "reload": "Reload"
     },
+    "form": {
+      "requiredNote": "Fields marked * are required"
+    },
     "day": {
       "monday": "Monday",
       "tuesday": "Tuesday",
@@ -137,7 +140,8 @@
         "body": "We're reviewing your application. We'll email you when your studio is approved."
       },
       "nav": {
-        "studioProfile": "Studio profile"
+        "studioProfile": "Studio profile",
+        "therapists": "Therapists"
       }
     },
     "signup": {
@@ -313,6 +317,119 @@
         "value": "March 21, 2025"
       }
     }
+  },
+  "therapistRoster": {
+    "page": {
+      "title": "Therapists",
+      "subtitle": "Manage your studio team"
+    },
+    "action": {
+      "addTherapist": "Add therapist",
+      "edit": "Edit {name}",
+      "deactivate": "Deactivate {name}",
+      "deactivateConfirm": "Yes, deactivate",
+      "reactivate": "Reactivate {name}",
+      "reactivateConfirm": "Yes, reactivate"
+    },
+    "modal": {
+      "add": {
+        "title": "Add therapist"
+      },
+      "edit": {
+        "title": "Edit therapist"
+      }
+    },
+    "field": {
+      "name": {
+        "label": "Full name",
+        "error": {
+          "required": "Name is required"
+        }
+      },
+      "role": {
+        "label": "Role or specialty",
+        "error": {
+          "required": "Role is required"
+        }
+      },
+      "phone": {
+        "label": "Phone"
+      },
+      "email": {
+        "label": "Email",
+        "error": {
+          "format": "Enter a valid email address"
+        }
+      },
+      "notes": {
+        "label": "Internal notes",
+        "helper": "Maximum 500 characters. Only visible to the studio.",
+        "charCount": "{count}/500"
+      }
+    },
+    "deactivate": {
+      "title": "Deactivate {name}?",
+      "body": "The therapist will no longer appear in new bookings.",
+      "warning": "This therapist may have upcoming bookings. Check your schedule before deactivating.",
+      "error": "Could not deactivate the therapist. Please try again."
+    },
+    "reactivate": {
+      "title": "Reactivate {name}?",
+      "body": "The therapist will become available for new bookings again.",
+      "error": "Could not reactivate the therapist. Please try again."
+    },
+    "filter": {
+      "groupLabel": "Filter by status",
+      "active": "Active",
+      "deactivated": "Deactivated",
+      "all": "All"
+    },
+    "list": {
+      "label": "Therapist list"
+    },
+    "status": {
+      "active": "Active",
+      "deactivated": "Deactivated"
+    },
+    "loading": "Loading therapists",
+    "empty": {
+      "active": {
+        "title": "No active therapists",
+        "body": "Add your first therapist to get started"
+      },
+      "deactivated": {
+        "title": "No deactivated therapists",
+        "body": "Deactivated therapists will appear here"
+      }
+    },
+    "loadError": {
+      "title": "Could not load the list",
+      "body": "An error occurred while loading therapists.",
+      "retry": "Retry"
+    },
+    "avatar": {
+      "label": "Photo of {name}",
+      "uploadPhoto": "Upload photo",
+      "replacePhoto": "Replace photo",
+      "removePhoto": "Remove photo",
+      "fileHint": "PNG, JPG, or WebP. Maximum 5 MB. Square format (1:1) recommended.",
+      "fileInput": {
+        "label": "Select therapist photo"
+      },
+      "uploading": "Uploading photo...",
+      "error": {
+        "fileType": "Invalid file type. Use PNG, JPG, or WebP.",
+        "fileSize": "File is too large. Maximum size is 5 MB.",
+        "uploadFailed": "Could not upload the photo. Please try again.",
+        "removeFailed": "Could not remove the photo. Please try again."
+      },
+      "undo": {
+        "title": "Photo removed",
+        "description": "The photo will be removed when you save.",
+        "action": "Undo"
+      }
+    },
+    "privacyDisclosure": "By saving, you agree to our <privacyLink>Privacy Policy</privacyLink> for the processing of therapist data."
   },
   "studioProfile": {
     "page": {
