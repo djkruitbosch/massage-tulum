@@ -141,7 +141,8 @@
       },
       "nav": {
         "studioProfile": "Studio profile",
-        "therapists": "Therapists"
+        "therapists": "Therapists",
+        "services": "Services"
       }
     },
     "signup": {
@@ -430,6 +431,119 @@
       }
     },
     "privacyDisclosure": "By saving, you agree to our <privacyLink>Privacy Policy</privacyLink> for the processing of therapist data."
+  },
+  "serviceCatalog": {
+    "page": {
+      "title": "Service catalog",
+      "subtitle": "Define the services your studio offers"
+    },
+    "action": {
+      "addService": "Add service",
+      "edit": "Edit {name}",
+      "deactivate": "Deactivate {name}",
+      "deactivateConfirm": "Yes, deactivate",
+      "reactivate": "Reactivate {name}",
+      "reactivateConfirm": "Yes, reactivate"
+    },
+    "modal": {
+      "add": {
+        "title": "Add service"
+      },
+      "edit": {
+        "title": "Edit service"
+      }
+    },
+    "field": {
+      "name": {
+        "label": "Service name",
+        "error": {
+          "required": "Service name is required",
+          "tooLong": "Name cannot exceed 120 characters"
+        }
+      },
+      "category": {
+        "label": "Category",
+        "helper": "Select an existing category or type a new one",
+        "createOption": "Create \"{value}\"",
+        "noOptions": "No previous categories",
+        "error": {
+          "tooLong": "Category cannot exceed 60 characters"
+        }
+      },
+      "description": {
+        "label": "Description",
+        "error": {
+          "tooLong": "Description cannot exceed 1000 characters"
+        }
+      },
+      "duration": {
+        "label": "Duration",
+        "unit": "min",
+        "custom": "Custom…",
+        "customLabel": "Custom duration (minutes)",
+        "error": {
+          "required": "Duration is required",
+          "min": "Duration must be at least 1 minute",
+          "max": "Maximum duration is 480 minutes (8 hours)"
+        }
+      },
+      "price": {
+        "label": "Base price",
+        "helper": "In Mexican pesos (MXN). Enter 0 for free services.",
+        "error": {
+          "required": "Price is required",
+          "min": "Price cannot be negative"
+        }
+      }
+    },
+    "deactivate": {
+      "title": "Deactivate \"{name}\"?",
+      "body": "The service will no longer be available for new bookings.",
+      "hasBookings": "This service has {count} upcoming bookings. Deactivating it will not cancel those bookings."
+    },
+    "reactivate": {
+      "title": "Reactivate \"{name}\"?",
+      "body": "The service will become available for new bookings again."
+    },
+    "filter": {
+      "groupLabel": "Filter by status",
+      "active": "Active",
+      "inactive": "Deactivated",
+      "all": "All"
+    },
+    "list": {
+      "label": "Service list"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Deactivated"
+    },
+    "loading": "Loading services",
+    "empty": {
+      "active": {
+        "title": "No active services",
+        "body": "Add your first service to get started"
+      },
+      "deactivated": {
+        "title": "No deactivated services",
+        "body": "Deactivated services will appear here"
+      }
+    },
+    "loadError": {
+      "title": "Could not load the catalog",
+      "body": "An error occurred while loading services.",
+      "retry": "Retry"
+    },
+    "toast": {
+      "created": "Service created successfully.",
+      "updated": "Service updated successfully.",
+      "deactivated": "Service deactivated.",
+      "reactivated": "Service reactivated."
+    },
+    "duration": {
+      "format": "{n} min",
+      "formatHours": "{h} hr {m} min"
+    }
   },
   "studioProfile": {
     "page": {
