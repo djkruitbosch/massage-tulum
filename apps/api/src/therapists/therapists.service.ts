@@ -49,7 +49,7 @@ const SIGNED_URL_TTL = 3600; // 1 hour
  * Log only therapistId and studioId (UUIDs) for correlation.
  *
  * See: docs/architecture/CU-869d29f1p-therapist-roster.md §4
- *      docs/adr/0013-studio-scoped-resource-pattern.md
+ *      docs/adr/0011-studio-scoped-resource-pattern.md
  */
 @Injectable()
 export class TherapistsService {

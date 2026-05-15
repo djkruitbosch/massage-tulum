@@ -189,7 +189,7 @@ export class TherapistsController {
     description:
       "Sets the therapist's status to 'active' or 'inactive'. " +
       'Deactivated therapists will not appear in booking flows. ' +
-      'This is a soft-deactivation only (ADR-0013) — the row is retained.',
+      'This is a soft-deactivation only (ADR-0011) — the row is retained.',
   })
   @ApiOkResponse({ description: 'Updated therapist with new status', type: TherapistResponseDto })
   @ApiBadRequestResponse({ description: "Invalid status value (must be 'active' or 'inactive')" })

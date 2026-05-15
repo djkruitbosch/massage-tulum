@@ -5,10 +5,10 @@
 --   SELECT  — authenticated studio owner can read only their own studio's therapists.
 --   INSERT  — authenticated studio owner can insert therapists for their own studio only.
 --   UPDATE  — authenticated studio owner can update only their own studio's therapists.
---   DELETE  — no DELETE policy; soft-delete via status='inactive' only (ADR-0013).
+--   DELETE  — no DELETE policy; soft-delete via status='inactive' only (ADR-0011).
 --   anon    — blocked for all operations.
 --
--- Four test cases required per ADR-0013 and ADR-0003 Convention 3
+-- Four test cases required per ADR-0011 and ADR-0003 Convention 3
 -- (in canonical ADR-0003 order):
 --   1. anon-read-blocked
 --   2. owner-read-allowed
@@ -25,7 +25,7 @@
 --   Therapist B1: ffffffff-0002-0000-0000-000000000000  (belongs to Studio B)
 --
 -- See: docs/architecture/CU-869d29f1p-therapist-roster.md §3b
---      docs/adr/0013-studio-scoped-resource-pattern.md
+--      docs/adr/0011-studio-scoped-resource-pattern.md
 --      docs/adr/0003-rls-baseline-conventions.md §Convention 3
 
 BEGIN;

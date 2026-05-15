@@ -8,7 +8,7 @@ import { optionalPhoneSchema } from './phone.schema.js';
  * The raw Storage path is never sent to the client.
  *
  * See: docs/architecture/CU-869d29f1p-therapist-roster.md §4j
- *      docs/adr/0013-studio-scoped-resource-pattern.md
+ *      docs/adr/0011-studio-scoped-resource-pattern.md
  */
 export const therapistSchema = z.object({
   id: z.string().uuid(),
@@ -62,7 +62,7 @@ export type UpdateTherapistInput = z.infer<typeof updateTherapistSchema>;
  * Schema for PATCH /api/studios/therapists/:id/status request body.
  *
  * Only accepts 'active' or 'inactive'. Other status transitions are
- * not exposed via the API in v1 (ADR-0013 soft-delete pattern).
+ * not exposed via the API in v1 (ADR-0011 soft-delete pattern).
  *
  * See: docs/architecture/CU-869d29f1p-therapist-roster.md §4f
  */

@@ -6,7 +6,7 @@ import { SUPABASE_CLIENT } from '../supabase/supabase.provider';
  * StudioResolverService — shared provider for resolving studio_id from a userId.
  *
  * Extracted from TherapistsService and StudiosProfileService when this became
- * the third NestJS domain requiring resolveStudioId (per ADR-0013 §"Consequences").
+ * the third NestJS domain requiring resolveStudioId (per ADR-0011 §"Consequences").
  *
  * Uses the service-role Supabase client so the studio_profiles lookup bypasses
  * RLS — required because we need the studio_id before we can construct
@@ -15,7 +15,7 @@ import { SUPABASE_CLIENT } from '../supabase/supabase.provider';
  * PII policy: userId is a UUID sub-claim, not sensitive. Logged for correlation.
  *
  * See: docs/architecture/CU-869d29f21-service-catalog.md §2.F
- *      docs/adr/0013-studio-scoped-resource-pattern.md §"NestJS service pattern"
+ *      docs/adr/0011-studio-scoped-resource-pattern.md §"NestJS service pattern"
  */
 @Injectable()
 export class StudioResolverService {
