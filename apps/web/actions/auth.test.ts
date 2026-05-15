@@ -71,6 +71,80 @@ describe('requestMagicLink', () => {
     );
   });
 
+  it('falls back to /dashboard when no next param is provided (es)', async () => {
+    mockSignInWithOtp.mockResolvedValue({ error: null });
+
+    const { requestMagicLink } = await import('./auth');
+    await requestMagicLink('owner@studio.com', 'es');
+
+    expect(mockSignInWithOtp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          emailRedirectTo: expect.stringContaining(
+            `/auth/callback?next=${encodeURIComponent('/dashboard')}`,
+          ),
+        }),
+      }),
+    );
+  });
+
+  it('falls back to /en/dashboard when no next param is provided (en)', async () => {
+    mockSignInWithOtp.mockResolvedValue({ error: null });
+
+    const { requestMagicLink } = await import('./auth');
+    await requestMagicLink('owner@studio.com', 'en');
+
+    expect(mockSignInWithOtp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          emailRedirectTo: expect.stringContaining(
+            `/auth/callback?next=${encodeURIComponent('/en/dashboard')}`,
+          ),
+        }),
+      }),
+    );
+  });
+
+  it('uses a safe next path when provided', async () => {
+    mockSignInWithOtp.mockResolvedValue({ error: null });
+
+    const { requestMagicLink } = await import('./auth');
+    await requestMagicLink('owner@studio.com', 'en', '/en/studio/therapists');
+
+    expect(mockSignInWithOtp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          emailRedirectTo: expect.stringContaining(
+            `/auth/callback?next=${encodeURIComponent('/en/studio/therapists')}`,
+          ),
+        }),
+      }),
+    );
+  });
+
+  it.each([
+    ['empty string', ''],
+    ['relative path without slash', 'evil.com'],
+    ['protocol-relative URL', '//evil.com'],
+    ['backslash-prefixed path', '/\\evil.com'],
+    ['absolute http URL', 'http://evil.com'],
+  ])('rejects unsafe next param (%s) and falls back to /dashboard', async (_label, unsafe) => {
+    mockSignInWithOtp.mockResolvedValue({ error: null });
+
+    const { requestMagicLink } = await import('./auth');
+    await requestMagicLink('owner@studio.com', 'es', unsafe);
+
+    expect(mockSignInWithOtp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          emailRedirectTo: expect.stringContaining(
+            `/auth/callback?next=${encodeURIComponent('/dashboard')}`,
+          ),
+        }),
+      }),
+    );
+  });
+
   it('returns too_many_requests when rate limit error is returned', async () => {
     mockSignInWithOtp.mockResolvedValue({
       error: {

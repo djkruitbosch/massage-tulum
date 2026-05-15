@@ -37,9 +37,15 @@ type BannerError = 'link_expired' | 'invalid_link' | 'too_many_requests' | 'gene
 interface LoginFormProps {
   initialError?: 'link_expired' | 'invalid_link' | null;
   locale: string;
+  /**
+   * Same-origin path to redirect to after sign-in. Set by middleware route
+   * protection when an unauthenticated user hits a protected page. When
+   * absent or unsafe, the magic-link callback falls back to `/dashboard`.
+   */
+  next?: string;
 }
 
-export function LoginForm({ initialError = null, locale }: LoginFormProps) {
+export function LoginForm({ initialError = null, locale, next }: LoginFormProps) {
   const t = useTranslations('auth.login');
   const [formState, setFormState] = useState<FormState>('idle');
   const [bannerError, setBannerError] = useState<BannerError>(initialError ?? null);
@@ -66,7 +72,7 @@ export function LoginForm({ initialError = null, locale }: LoginFormProps) {
     setFormState('loading');
 
     startTransition(async () => {
-      const result = await requestMagicLink(data.email, locale);
+      const result = await requestMagicLink(data.email, locale, next);
 
       if (result.success) {
         setSubmittedEmail(data.email);
