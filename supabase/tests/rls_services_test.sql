@@ -22,10 +22,15 @@
 --   User B:    22222222-0000-0000-0000-000000000000
 --   Studio A:  11111111-0001-0000-0000-000000000000
 --   Studio B:  22222222-0001-0000-0000-000000000000
---   Service A1: 11111111-0002-0000-0000-000000000000  (Studio A, active)
---   Service A2: 11111111-0003-0000-0000-000000000000  (Studio A, inactive)
---   Service A3: 11111111-0004-0000-0000-000000000000  (Studio A, active)
+--   Service A1: 11111111-0002-0000-0000-000000000000  (Studio A, active,   name: 'Masaje Relajante')
+--   Service A2: 11111111-0003-0000-0000-000000000000  (Studio A, inactive, name: 'Masaje Deportivo')
+--   Service A3: 11111111-0004-0000-0000-000000000000  (Studio A, active,   name: 'Masaje con Piedras Calientes')
 --   Service B1: 22222222-0002-0000-0000-000000000000  (Studio B, active)
+--
+-- ORDER BY name for test 2 (ascending):
+--   'Masaje con Piedras Calientes' → 11111111-0004  (C before D)
+--   'Masaje Deportivo'             → 11111111-0003  (D before R)
+--   'Masaje Relajante'             → 11111111-0002
 --
 -- See: docs/architecture/CU-869d29f21-service-catalog.md §2
 --      docs/adr/0011-studio-scoped-resource-pattern.md
@@ -86,14 +91,15 @@ SET LOCAL role = authenticated;
 SET LOCAL "request.jwt.claims" =
   '{"sub": "11111111-0000-0000-0000-000000000000", "role": "authenticated"}';
 
+-- ORDER BY name ascending: Piedras Calientes (0004) < Deportivo (0003) < Relajante (0002)
 SELECT results_eq(
   $$ SELECT id FROM public.services
      WHERE studio_id = '11111111-0001-0000-0000-000000000000'
      ORDER BY name $$,
   ARRAY[
     '11111111-0004-0000-0000-000000000000'::uuid,
-    '11111111-0002-0000-0000-000000000000'::uuid,
-    '11111111-0003-0000-0000-000000000000'::uuid
+    '11111111-0003-0000-0000-000000000000'::uuid,
+    '11111111-0002-0000-0000-000000000000'::uuid
   ],
   'owner-A: can read all own studio''s services (results_eq with explicit UUID array)'
 );
@@ -136,15 +142,20 @@ SELECT throws_ok(
 );
 
 -- ─── Test 7: owner-A cannot UPDATE studio-B''s services ───────────────────────
+-- data-modifying WITH cannot be nested inside SELECT is() in Postgres.
+-- Capture the UPDATE RETURNING result into a temp table first, then assert count = 0.
+CREATE TEMP TABLE _svc_upd_result AS
+  UPDATE public.services SET name = 'Hacked'
+  WHERE studio_id = '22222222-0001-0000-0000-000000000000'
+  RETURNING id;
+
 SELECT is(
-  (WITH upd AS (
-    UPDATE public.services SET name = 'Hacked'
-    WHERE studio_id = '22222222-0001-0000-0000-000000000000'
-    RETURNING id
-  ) SELECT count(*)::int FROM upd),
+  (SELECT count(*)::int FROM _svc_upd_result),
   0,
   'owner-A: cannot update cross-studio services'
 );
+
+DROP TABLE _svc_upd_result;
 
 SELECT * FROM finish();
 ROLLBACK;
