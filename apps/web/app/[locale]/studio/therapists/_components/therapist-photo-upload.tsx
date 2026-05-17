@@ -130,7 +130,7 @@ export function TherapistPhotoUpload({
         {isPending ? (
           /* Uploading state: shimmer skeleton over the avatar circle */
           <div
-            className="h-24 w-24 rounded-full bg-neutral-200 animate-pulse"
+            className="h-24 w-24 rounded-full bg-neutral-200 motion-safe:animate-pulse"
             aria-label={t('avatar.uploading')}
           />
         ) : (
