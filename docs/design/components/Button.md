@@ -178,7 +178,7 @@ When `loading={true}`:
 4. ARIA: `aria-busy="true"` is added to the button element.
 5. ARIA: `aria-label` changes to include the loading suffix (see Copy section below), or a visually-hidden `<span>` with the loading text is added for screen readers.
 
-**Spinner:** A circular Lucide `Loader2` icon (`lucide-react`) at the relevant size (16px for `sm`, 20px for `md`/`lg`), animated with `animate-spin`. Class: `animate-spin text-current`.
+**Spinner:** A circular Lucide `Loader2` icon (`lucide-react`) at the relevant size (16px for `sm`, 20px for `md`/`lg`), animated with `motion-safe:animate-spin` (gated per `docs/design/accessibility.md` §Reduced Motion). Class: `motion-safe:animate-spin text-current`.
 
 ---
 

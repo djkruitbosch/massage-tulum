@@ -111,7 +111,7 @@ function Spinner({ size }: { size: NonNullable<ButtonProps['size']> }) {
   return (
     <svg
       aria-hidden="true"
-      className="animate-spin text-current"
+      className="motion-safe:animate-spin text-current"
       width={px}
       height={px}
       viewBox="0 0 24 24"
