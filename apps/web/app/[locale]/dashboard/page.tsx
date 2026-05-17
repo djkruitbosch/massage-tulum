@@ -16,6 +16,7 @@
  */
 
 import { LayoutGrid, ShoppingBag, UserCircle, Users } from 'lucide-react';
+import type { useTranslations } from 'next-intl';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Footer } from '../_components/footer';
@@ -152,10 +153,8 @@ export default async function DashboardPage() {
 interface HeaderProps {
   email: string;
   locale: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  tLayout: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  tLs: any;
+  tLayout: ReturnType<typeof useTranslations<'layout'>>;
+  tLs: ReturnType<typeof useTranslations<'languageSwitcher'>>;
 }
 
 function DashboardHeader({ email, locale, tLayout, tLs }: HeaderProps) {
@@ -221,4 +220,3 @@ function DashboardHeader({ email, locale, tLayout, tLs }: HeaderProps) {
     </header>
   );
 }
-
