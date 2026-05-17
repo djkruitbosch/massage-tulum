@@ -24,6 +24,7 @@ import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 import { listServices } from '../../../../actions/services';
 import { createClient } from '../../../../utils/supabase/server';
+import { Footer } from '../../_components/footer';
 import { ServiceList } from './_components/service-list';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -67,7 +68,6 @@ export default async function ServicesPage({ searchParams }: ServicesPageProps) 
   }
 
   const dashboardHref = locale === 'en' ? '/en/dashboard' : '/dashboard';
-  const currentYear = new Date().getFullYear();
 
   return (
     <>
@@ -131,14 +131,7 @@ export default async function ServicesPage({ searchParams }: ServicesPageProps) 
           </div>
         </main>
 
-        {/* Footer */}
-        <footer className="h-12 border-t border-neutral-200 bg-white" role="contentinfo">
-          <div className="mx-auto flex h-full max-w-content items-center justify-center px-4">
-            <p className="text-xs text-neutral-400 text-center">
-              {tLayout('footer.copyright', { year: String(currentYear) })}
-            </p>
-          </div>
-        </footer>
+        <Footer locale={locale} />
       </div>
     </>
   );
