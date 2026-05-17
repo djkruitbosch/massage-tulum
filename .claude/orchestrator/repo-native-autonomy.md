@@ -19,20 +19,28 @@ The autonomous loop uses the repo, not ClickUp, as the state machine.
 - Create branches for approved implementation slices
 - Commit and push branch work
 - Open PRs
+- Review PRs, resolve reviewer comments, and re-push fixes
 - Run lint/typecheck/test/build/audit
+- Run QA against PRs
+- Merge PRs when `.claude/orchestrator/merge-policy.md` is satisfied:
+  CI green, QA passed, reviewer issues resolved, no destructive
+  changes, and not touching secrets or billing
 - Update `.claude/status.md`
 
 ## Must stop for human approval
 
-- Before implementation starts from a new/changed spec
-- Before implementation starts from architecture/design docs
-- Before merging PRs
-- Before paid services, production deploys, destructive migrations, secret rotation, or stack changes
+- Anything requiring external config, credentials, or human accounts
+- Secret creation or rotation
+- Billing / account changes
+- Paid service signups or stack changes
+- Production deploys
+- Destructive migrations or data deletion
+- Changes to branch protection
 
 ## Never do autonomously
 
-- Merge to `main`
-- Push directly to `main`
+- Push directly to `main` (always go through a PR)
+- Merge a PR that fails any check in `.claude/orchestrator/merge-policy.md`
 - Skip RLS for database tables
 - Commit secrets
 - Create/update/search ClickUp unless explicitly requested
