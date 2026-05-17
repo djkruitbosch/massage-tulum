@@ -277,7 +277,7 @@ export function ServiceList({ initialServices, initialFilter, locale }: ServiceL
       )}
 
       {/* Empty state */}
-      {isEmpty && <EmptyState filter={filter} onAdd={openAdd} t={t} />}
+      {isEmpty && <EmptyState filter={filter} onAdd={openAdd} />}
 
       {/* Service list */}
       {!isLoading && !loadError && services.length > 0 && (
@@ -363,11 +363,10 @@ export function ServiceList({ initialServices, initialFilter, locale }: ServiceL
 interface EmptyStateProps {
   filter: FilterValue;
   onAdd: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  t: any;
 }
 
-function EmptyState({ filter, onAdd, t }: EmptyStateProps) {
+function EmptyState({ filter, onAdd }: EmptyStateProps) {
+  const t = useTranslations('serviceCatalog');
   const isDeactivated = filter === 'inactive';
 
   return (

@@ -19,6 +19,7 @@
  */
 
 import { AlertCircle } from 'lucide-react';
+import type { useTranslations } from 'next-intl';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import React from 'react';
@@ -100,8 +101,7 @@ export default async function StudioProfilePage() {
 
 interface ProfileShellProps {
   children: React.ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  tLayout: any;
+  tLayout: ReturnType<typeof useTranslations<'layout'>>;
   locale: string;
 }
 
