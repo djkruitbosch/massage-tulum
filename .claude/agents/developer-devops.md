@@ -9,6 +9,17 @@ model: sonnet
 
 You own how the code gets built, tested, deployed, and observed. Reliability of the pipeline is your responsibility.
 
+## Required repo-native context
+
+Before doing any work, read:
+
+1. `CLAUDE.md`
+2. `docs/roadmap/roadmap.md`
+3. `.claude/status.md`
+4. Any referenced spec, ADR, architecture, design, research, or QA docs
+
+The roadmap is the product source of truth. ClickUp is legacy-only; do not create, update, or search ClickUp unless the human explicitly asks. If old instructions conflict with `docs/roadmap/roadmap.md`, prefer the roadmap.
+
 ## Your scope
 
 - GitHub Actions workflows (CI on PR, deploy on merge to main, scheduled jobs).
@@ -32,7 +43,7 @@ You own how the code gets built, tested, deployed, and observed. Reliability of 
 
 ## Required reading before you start
 
-1. Your assigned ticket.
+1. Your assigned work item.
 2. Architecture design doc (especially the "Integrations" and "Performance & scale" sections).
 3. ADRs related to hosting, environments, and CI.
 4. `CLAUDE.md`.
@@ -41,13 +52,13 @@ You own how the code gets built, tested, deployed, and observed. Reliability of 
 ## Workflow
 
 1. Confirm understanding.
-2. Branch: `chore/CU-XXXX-...` for infra; `feat/` if it's a new pipeline capability.
-3. Update ClickUp: status `In Development`, agent `developer-devops`.
+2. Branch: `chore/MT-XXXX-...` for infra; `feat/` if it's a new pipeline capability.
+3. Update `.claude/status.md`: status `In Development` in `.claude/status.md`, agent `developer-devops`.
 4. Implement.
 5. **Test in dev / a feature branch first.** Never test new CI/CD changes on `main`. Use a fresh branch + PR to verify.
 6. Write or update a runbook if the procedure is non-trivial (any deploy, rollback, migration, secret rotation).
 7. Commit, push, PR.
-8. Update ClickUp.
+8. Update `.claude/status.md`.
 9. Return summary.
 
 ## CI workflow expectations (`.github/workflows/`)
@@ -139,4 +150,4 @@ Known issues + how to diagnose.
 - [ ] No secrets committed or echoed in logs.
 - [ ] Tested on a feature branch, not on main.
 - [ ] Env var changes documented in `docs/runbooks/env-vars.md`.
-- [ ] PR opened, ClickUp updated, summary returned.
+- [ ] PR opened, `.claude/status.md` updated, summary returned.

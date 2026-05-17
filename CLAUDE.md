@@ -26,7 +26,7 @@ This file is loaded automatically at the start of every Claude Code session. Rea
 | Hosting (BE) | TBD by Architect (Vercel serverless is incompatible with long-running NestJS, so likely Railway / Fly / Render) |
 | Monorepo | Turborepo + pnpm workspaces |
 | i18n | Spanish + English (next-intl) |
-| Project mgmt | ClickUp (audit trail, tickets, docs) |
+| Project mgmt | Repo-native docs + GitHub Issues/PRs. ClickUp is legacy only and not used by default. |
 | Code | GitHub |
 | CI/CD | GitHub Actions |
 
@@ -45,11 +45,15 @@ massage-tulum/
 │   ├── shared/           # Shared TS types, validation schemas (zod)
 │   └── ui/               # Shared React components (later)
 ├── docs/
+│   ├── roadmap/          # Product roadmap and feature sequencing (source of truth)
+│   ├── specs/            # Feature specs and acceptance criteria
+│   ├── architecture/     # Architecture/design docs consumed by agents
 │   ├── adr/              # Architecture Decision Records (numbered, immutable once accepted)
 │   ├── runbooks/         # Operational runbooks
 │   ├── design/           # Design specs and tokens
 │   ├── research/         # Researcher reports
-│   └── templates/        # Spec / ticket / ADR templates
+│   ├── qa/               # QA reports
+│   └── templates/        # Spec / work-item / ADR templates
 ├── .claude/
 │   ├── agents/           # Sub-agent definitions
 │   ├── commands/         # Slash commands
@@ -69,32 +73,45 @@ This is critical. **Read it before invoking any sub-agent.**
 
 The main Claude Code session acts as the **Project Manager**. The PM does not exist as a sub-agent (sub-agents cannot spawn other sub-agents — Claude Code constraint). When you start a session and want to do project work, the main session reads this file, picks up the workflow, and orchestrates by invoking sub-agents one at a time.
 
+### Repo-native orchestration model
+
+The repo is the source of truth. ClickUp was tried and is now legacy-only because it burned tokens without enough value. Do not create, update, or search ClickUp unless the human explicitly asks.
+
+Before starting project work, the main session and every sub-agent must read:
+
+1. `CLAUDE.md`
+2. `docs/roadmap/roadmap.md`
+3. `.claude/status.md`
+4. Relevant docs in `docs/specs/`, `docs/architecture/`, `docs/adr/`, `docs/design/`, `docs/research/`, and `docs/qa/`
+
+If old ClickUp references conflict with `docs/roadmap/roadmap.md`, prefer the roadmap.
+
 ### The standard feature workflow
 
 ```
-1. Human: "/new-feature <description>"
+1. Human: "/new-feature <roadmap item id or description>"
    ↓
-2. Main session (in PM mode) creates a ClickUp epic + initial spec ticket
+2. Main session reads `docs/roadmap/roadmap.md` and finds or creates a repo-native work item
    ↓
-3. Invoke `product-manager` sub-agent → produces spec
+3. Invoke `product-manager` sub-agent → produces/updates `docs/specs/<work-item-slug>.md`
    ↓
-🛑 GATE 1: Human reviews and approves spec in ClickUp
+🛑 GATE 1: Human reviews and approves the spec in chat or by editing the spec status
    ↓
 4. (Parallel where possible) Invoke `researcher` for unknowns,
-   then `architect` for design, then `designer` for UI
+   then `architect` for technical design, then `designer` for UI
    ↓
-🛑 GATE 2: Human reviews architecture + design
+🛑 GATE 2: Human reviews architecture + design docs
    ↓
-5. Architect breaks the work into dev tickets (BE / FE / DevOps)
+5. Architect breaks the work into implementation slices in the architecture/spec docs
    ↓
-6. Invoke `developer-be`, `developer-fe`, `developer-devops` per ticket
-   - Each creates a branch, writes code, opens a PR, updates ClickUp
+6. Invoke `developer-be`, `developer-fe`, `developer-devops` per implementation slice
+   - Each creates a branch, writes code, opens a PR, updates `.claude/status.md` and relevant docs
    ↓
 7. Invoke `reviewer` against the PR → comments
    ↓
 8. Loop back to developer if changes needed
    ↓
-9. Invoke `qa` once review passes → functional tests
+9. Invoke `qa` once review passes → functional tests and `docs/qa/<work-item-slug>.md`
    ↓
 🛑 GATE 3: Human reviews PR and merges to main
 ```
@@ -109,13 +126,13 @@ Two rules apply to every developer-agent PR before the orchestrator surfaces it 
 
 **Rule 1 — Fresh-clone integration smoke test.** Before the orchestrator declares a wave done, run from a fresh `git clone` of the merged target branch (or the PR branch if pre-merge): `pnpm install && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm audit --audit-level=high --prod`. Any non-zero exit blocks the wave. "Each ticket's tests passed in isolation" is not enough — integration is where the failures actually surface.
 
-**Rule 2 — PR-branch CI must be green before requesting human merge.** `gh pr checks <pr>` must show all required status checks passing on the PR branch. Do not surface a PR to the human with red CI and a request to merge — the human will not be the integration test. If branch protection enforces required checks (CU-869d29mxg), this is automatic; until then the orchestrator enforces it manually.
+**Rule 2 — PR-branch CI must be green before requesting human merge.** `gh pr checks <pr>` must show all required status checks passing on the PR branch. Do not surface a PR to the human with red CI and a request to merge — the human will not be the integration test. If branch protection enforces required checks (MT-foundation-ci), this is automatic; until then the orchestrator enforces it manually.
 
 When CI is red on a PR, fix on the branch, re-push, wait for green, *then* surface for review. When CI is red on `main` (e.g. inherited from a wave that was merged before this rule existed), fixup PRs are still the right tool — but the underlying mistake is that those PRs should have surfaced their failures *before* their parent wave merged.
 
 ### Bug fix workflow
 
-Lighter: skip PM/Architect/Designer unless the bug reveals a design flaw. Go: ticket → developer → reviewer → QA → human merge.
+Lighter: skip PM/Architect/Designer unless the bug reveals a design flaw. Go: repo-native work item → developer → reviewer → QA → human merge.
 
 ### Research workflow
 
@@ -150,7 +167,7 @@ The Project Manager role is performed by the main session, not as a sub-agent.
 - ESLint + Prettier enforced via pre-commit hook.
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
 - One concern per PR. If a PR description needs the word "also", split it.
-- Every PR links to its ClickUp ticket (`Closes CU-XXXX` in description).
+- Every PR links to its repo-native work item or roadmap/spec slug in the PR description.
 
 ### Backend (NestJS)
 - Module-per-domain structure (e.g., `studios/`, `bookings/`, `therapists/`).
@@ -175,36 +192,52 @@ The Project Manager role is performed by the main session, not as a sub-agent.
 
 ## Git workflow
 
-- Branch from `main`: `feat/CU-1234-short-description`, `fix/CU-1234-...`, etc.
+- Branch from `main`: `feat/mt-f001-short-description`, `fix/mt-bug-short-description`, etc.
 - Developer creates branch, commits, pushes, opens PR.
-- PR title: `[CU-1234] feat(scope): summary`
+- PR title: `[MT-F001] feat(scope): summary` or `[slug] feat(scope): summary`
 - Branch protection on `main`: requires 1 approving PR review + green CI + linear history. **No agent ever merges to main — that's the human's job.**
 - Squash-merge only.
 
 ---
 
-## ClickUp conventions
+## Repo-native work tracking conventions
 
-ClickUp is the **audit trail and human interface**. It is not the orchestration mechanism.
+The repo is the project-management system. ClickUp is legacy-only and should not be used unless the human explicitly asks.
 
-- Every unit of work has a ticket before code is written.
-- Required custom fields: `Agent` (which agent did the work), `PR Link`, `ADR Link` (if applicable), `Spec Link`.
-- Status flow: `Backlog` → `Spec` → `Spec Approved` → `In Design` → `Ready for Dev` → `In Development` → `In Review` → `In QA` → `Ready to Merge` → `Done`.
-- Every agent's last action before returning **MUST** be:
-  1. Update the ClickUp ticket: status, agent field, summary comment.
-  2. If decisions were made: create or update an ADR / runbook / spec doc.
-- ClickUp Docs hold durable knowledge: architecture decisions (mirrored from ADRs), API contracts, runbooks, onboarding.
+- Every unit of work must map to a roadmap item, spec slug, GitHub Issue, or clearly named branch/PR.
+- `docs/roadmap/roadmap.md` is the product source of truth and determines sequencing.
+- Specs live in `docs/specs/`.
+- Architecture docs live in `docs/architecture/`; ADRs live in `docs/adr/`.
+- Design docs live in `docs/design/`.
+- Research reports live in `docs/research/`.
+- QA reports live in `docs/qa/`.
+- `.claude/status.md` is the lightweight execution state file. Agents must update it when they start, finish, block, or hand off work.
+- GitHub PRs are the review surface for implementation work.
+
+Recommended work-item IDs:
+
+```text
+MT-F001 studio onboarding
+MT-F002 service catalog
+MT-F003 therapist management
+MT-F004 availability calendar
+MT-F005 booking request flow
+```
+
+Every agent's last action before returning MUST be:
+1. Update `.claude/status.md` with status, branch/PR/doc links, summary, and next recommended action.
+2. If decisions were made: create or update the relevant ADR / runbook / spec / architecture / design / research / QA doc.
 
 ---
 
 ## Vault capture (end of session)
 
-After completing work in a session, in addition to updating ClickUp:
+After completing notable work in a session:
 
 1. Append a brief entry to `~/Vaults/DJ-Vault/01-Daily/YYYY-MM-DD.md`
    under a heading `### Claude Code session: massage-tulum`:
    - 1-2 sentences on what was worked on
-   - Links to ClickUp tickets touched (e.g. `[[CU-1234]]`)
+   - Links to roadmap/spec/PR items touched (e.g. `[[MT-F001]]`, `docs/specs/...`, PR URL)
    - Links to ADRs created (e.g. `[[ADR-0007]]`)
    - One sentence on "what surprised me" or "what I learned" — if anything
    - Skip the entry entirely if nothing notable happened
@@ -237,7 +270,7 @@ in the vault filesystem.
 
 - **ADRs** (`docs/adr/NNNN-title.md`) for any architectural decision: tech choices, schema design, integration patterns. Once accepted, ADRs are immutable. Supersede with a new ADR.
 - **Runbooks** (`docs/runbooks/`) for operational procedures: deploy, rollback, incident response, db migrations.
-- **Specs** are owned by the PM agent and live in ClickUp Docs (linked from the ticket).
+- **Specs** are owned by the PM agent and live in `docs/specs/`.
 - **API docs**: auto-generated from NestJS Swagger. Never written by hand.
 - **READMEs**: every package and app has one.
 
@@ -298,7 +331,6 @@ We're on free tiers where possible:
 - Supabase free tier: 500 MB DB, 1 GB storage, **pauses after 1 week of inactivity**. Architect must plan around this.
 - Brevo free tier: 300 emails/day.
 - Vercel hobby: fine for one developer.
-- ClickUp free tier: enough for one user; check limits.
 
 When we hit a free-tier wall, the relevant agent surfaces it and we decide together.
 
@@ -309,5 +341,5 @@ When we hit a free-tier wall, the relevant agent surfaces it and we decide toget
 If an agent is unsure, it should:
 1. Check this file and its own agent definition first.
 2. Look in `docs/adr/` for prior decisions.
-3. Search ClickUp for related tickets.
+3. Search `docs/roadmap/roadmap.md`, `docs/specs/`, `docs/architecture/`, `docs/adr/`, and open GitHub Issues/PRs for related work.
 4. **Ask the human in chat.** Never invent an answer to an architectural question.
