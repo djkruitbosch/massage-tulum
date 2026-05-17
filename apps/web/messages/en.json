@@ -42,6 +42,12 @@
       "body": "Please reload the page.",
       "reload": "Reload"
     },
+    "notFound": {
+      "code": "404",
+      "title": "Page not found",
+      "body": "The page you are looking for does not exist or has been moved.",
+      "cta": "Back to home"
+    },
     "form": {
       "requiredNote": "Fields marked * are required"
     },
