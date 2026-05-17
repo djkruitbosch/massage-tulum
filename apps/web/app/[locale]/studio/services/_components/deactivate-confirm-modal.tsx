@@ -164,7 +164,10 @@ export function DeactivateConfirmModal({
 
         {/* Loading state for future bookings count */}
         {countLoading && (
-          <div className="mt-3 h-4 w-48 rounded bg-neutral-100 animate-pulse" aria-hidden="true" />
+          <div
+            className="mt-3 h-4 w-48 rounded bg-neutral-100 motion-safe:animate-pulse"
+            aria-hidden="true"
+          />
         )}
 
         {/* Warning block — conditional on futureBookingsCount > 0 */}

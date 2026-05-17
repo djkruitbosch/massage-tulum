@@ -69,11 +69,11 @@ function SkeletonRows() {
         <li key={i} className="py-4 border-b border-neutral-100 last:border-b-0" aria-hidden="true">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 flex-1 space-y-1.5">
-              <div className="h-4 w-44 rounded bg-neutral-200 animate-pulse" />
-              <div className="h-3 w-20 rounded bg-neutral-200 animate-pulse" />
-              <div className="h-3.5 w-36 rounded bg-neutral-200 animate-pulse" />
+              <div className="h-4 w-44 rounded bg-neutral-200 motion-safe:animate-pulse" />
+              <div className="h-3 w-20 rounded bg-neutral-200 motion-safe:animate-pulse" />
+              <div className="h-3.5 w-36 rounded bg-neutral-200 motion-safe:animate-pulse" />
             </div>
-            <div className="h-8 w-16 rounded bg-neutral-200 animate-pulse" />
+            <div className="h-8 w-16 rounded bg-neutral-200 motion-safe:animate-pulse" />
           </div>
         </li>
       ))}
