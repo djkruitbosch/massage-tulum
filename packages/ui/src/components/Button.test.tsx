@@ -120,7 +120,7 @@ describe('Button', () => {
     const svg = btn.querySelector('svg');
     expect(svg).toBeInTheDocument();
     expect(svg).toHaveAttribute('aria-hidden', 'true');
-    expect(svg?.getAttribute('class')).toContain('animate-spin');
+    expect(svg?.getAttribute('class')).toContain('motion-safe:animate-spin');
   });
 
   it('label text remains visible (though dimmed) when loading', () => {
