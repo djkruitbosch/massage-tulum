@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getLocale } from 'next-intl/server';
+import { getMessages, getLocale, getTranslations } from 'next-intl/server';
 import '../globals.css';
 
 const inter = Inter({
@@ -18,10 +18,18 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ['300', '400', '500', '600', '700', '800'],
 });
 
-export const metadata: Metadata = {
-  title: 'Massage Tulum',
-  description: 'Professional management platform for massage studios in Tulum.',
-};
+const BRAND = 'Massage Tulum';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('meta');
+  return {
+    title: {
+      default: BRAND,
+      template: `%s · ${BRAND}`,
+    },
+    description: t('description'),
+  };
+}
 
 interface RootLayoutProps {
   children: React.ReactNode;

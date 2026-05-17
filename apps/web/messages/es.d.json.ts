@@ -2,6 +2,9 @@
 // See: https://next-intl.dev/docs/workflows/typescript#messages-arguments
 
 declare const messages: {
+  meta: {
+    description: 'Plataforma profesional de gestión para estudios de masajes en Tulum.';
+  };
   home: {
     hero: {
       title: 'Bienvenido a Massage Tulum';

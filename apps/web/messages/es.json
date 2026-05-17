@@ -1,4 +1,7 @@
 {
+  "meta": {
+    "description": "Plataforma profesional de gestión para estudios de masajes en Tulum."
+  },
   "home": {
     "hero": {
       "title": "Bienvenido a Massage Tulum",
