@@ -1,4 +1,9 @@
 {
+  "meta": {
+    "title": "Massage Tulum",
+    "titleTemplate": "%s · Massage Tulum",
+    "description": "Professional management platform for massage studios in Tulum."
+  },
   "home": {
     "hero": {
       "title": "Welcome to Massage Tulum",

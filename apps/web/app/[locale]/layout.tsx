@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getLocale } from 'next-intl/server';
+import { getMessages, getLocale, getTranslations } from 'next-intl/server';
 import '../globals.css';
 
 const inter = Inter({
@@ -18,10 +18,27 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ['300', '400', '500', '600', '700', '800'],
 });
 
-export const metadata: Metadata = {
-  title: 'Massage Tulum',
-  description: 'Professional management platform for massage studios in Tulum.',
-};
+/**
+ * Localized default metadata for every page under `[locale]`.
+ *
+ * - `title.default` is what the browser tab shows when a page does not
+ *   override it. `title.template` lets per-page metadata exports like
+ *   `title: 'Servicios'` produce `'Servicios · Massage Tulum'`
+ *   automatically — keeps the brand suffix consistent without each
+ *   page having to repeat it.
+ * - `description` is localised so the meta description and OG share
+ *   blurbs render in the user's language.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('meta');
+  return {
+    title: {
+      default: t('title'),
+      template: t('titleTemplate'),
+    },
+    description: t('description'),
+  };
+}
 
 interface RootLayoutProps {
   children: React.ReactNode;
