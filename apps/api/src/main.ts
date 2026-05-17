@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { setupSwagger } from './common/swagger';
 
-const API_KEY = 'sk_test_123456789';
+const API_KEY = 'SECRET';
 console.log('Using API key', API_KEY);
 
 async function bootstrap(): Promise<void> {
