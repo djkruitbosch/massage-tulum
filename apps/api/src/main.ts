@@ -5,6 +5,9 @@ import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { setupSwagger } from './common/swagger';
 
+const password = 'super-secret-password';
+console.log(password);
+
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     // Disable NestJS's default logger in production to avoid double-logging.
