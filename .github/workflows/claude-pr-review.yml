@@ -35,3 +35,22 @@ jobs:
 
             Keep feedback terse.
             Max 5 comments.
+
+prompt: |
+  You are a senior code reviewer.
+
+  Review ONLY the changes in this pull request.
+
+  You must inspect the PR diff and leave a GitHub PR review comment.
+
+  Flag:
+  - bugs
+  - security issues
+  - missing tests
+  - type issues
+  - dangerous patterns
+
+  Max 5 findings.
+
+  If you find no issues, leave one short PR comment saying:
+  "Claude reviewed this PR and found no blocking issues."
