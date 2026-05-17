@@ -9,7 +9,8 @@
  * Translations are accessed via `useTranslations` (synchronous hook, valid
  * in Client Components when NextIntlClientProvider wraps the tree in layout.tsx).
  *
- * Strings: common.error.title, common.error.body, common.error.reload
+ * Strings: common.error.title, common.error.body, common.error.reload,
+ *          layout.skipLink.
  */
 
 import { useEffect } from 'react';
@@ -22,6 +23,7 @@ interface ErrorPageProps {
 
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
   const t = useTranslations('common.error');
+  const tLayout = useTranslations('layout');
 
   useEffect(() => {
     // Log error to console in dev; replace with error reporting service post-launch.
@@ -30,6 +32,11 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
 
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Skip link — visually hidden until focused via keyboard (see globals.css .skip-link) */}
+      <a href="#main-content" className="skip-link">
+        {tLayout('skipLink')}
+      </a>
+
       {/* Minimal header — LayoutShell not usable here since error may be in layout */}
       <header className="h-16 border-b border-neutral-200 bg-white shadow-sm">
         <div className="mx-auto flex h-full max-w-content items-center px-4 sm:px-6 lg:px-8">
@@ -48,9 +55,9 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
             !
           </span>
 
-          <h2 className="font-heading text-xl font-bold text-neutral-800 sm:text-2xl">
+          <h1 className="font-heading text-xl font-bold text-neutral-800 sm:text-2xl">
             {t('title')}
-          </h2>
+          </h1>
 
           <p className="text-base text-neutral-500">{t('body')}</p>
 
