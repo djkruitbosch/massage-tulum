@@ -51,7 +51,7 @@ export function TherapistRow({
               <span className="text-base font-medium text-neutral-800 truncate">
                 {therapist.name}
               </span>
-              {showStatus && <StatusPill active={isActive} t={t} />}
+              {showStatus && <StatusPill active={isActive} />}
             </div>
             <span className="text-sm text-neutral-500 block truncate">{therapist.role}</span>
           </div>
@@ -119,7 +119,7 @@ export function TherapistRow({
               <span className="text-base font-medium text-neutral-800 truncate">
                 {therapist.name}
               </span>
-              {showStatus && <StatusPill active={isActive} t={t} />}
+              {showStatus && <StatusPill active={isActive} />}
             </div>
             <span className="text-sm text-neutral-500 block truncate">{therapist.role}</span>
           </div>
@@ -181,11 +181,10 @@ export function TherapistRow({
 
 interface StatusPillProps {
   active: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  t: any;
 }
 
-function StatusPill({ active, t }: StatusPillProps) {
+function StatusPill({ active }: StatusPillProps) {
+  const t = useTranslations('therapistRoster');
   return (
     <span
       className={[

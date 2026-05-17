@@ -251,7 +251,7 @@ export function TherapistList({ initialTherapists, initialFilter, locale }: Ther
 
       {/* List or empty state */}
       {isEmpty ? (
-        <EmptyState filter={filter} onAdd={openAdd} t={t} />
+        <EmptyState filter={filter} onAdd={openAdd} />
       ) : (
         <ul role="list" aria-label={t('list.label')} className="divide-y-0">
           {therapists.map((therapist) => (
@@ -337,11 +337,10 @@ export function TherapistList({ initialTherapists, initialFilter, locale }: Ther
 interface EmptyStateProps {
   filter: FilterValue;
   onAdd: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  t: any;
 }
 
-function EmptyState({ filter, onAdd, t }: EmptyStateProps) {
+function EmptyState({ filter, onAdd }: EmptyStateProps) {
+  const t = useTranslations('therapistRoster');
   const isDeactivatedFilter = filter === 'inactive';
 
   return (
