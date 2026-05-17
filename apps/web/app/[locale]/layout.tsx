@@ -18,23 +18,14 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ['300', '400', '500', '600', '700', '800'],
 });
 
-/**
- * Localized default metadata for every page under `[locale]`.
- *
- * - `title.default` is what the browser tab shows when a page does not
- *   override it. `title.template` lets per-page metadata exports like
- *   `title: 'Servicios'` produce `'Servicios · Massage Tulum'`
- *   automatically — keeps the brand suffix consistent without each
- *   page having to repeat it.
- * - `description` is localised so the meta description and OG share
- *   blurbs render in the user's language.
- */
+const BRAND = 'Massage Tulum';
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('meta');
   return {
     title: {
-      default: t('title'),
-      template: t('titleTemplate'),
+      default: BRAND,
+      template: `%s · ${BRAND}`,
     },
     description: t('description'),
   };

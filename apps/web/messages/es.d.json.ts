@@ -3,8 +3,6 @@
 
 declare const messages: {
   meta: {
-    title: 'Massage Tulum';
-    titleTemplate: '%s · Massage Tulum';
     description: 'Plataforma profesional de gestión para estudios de masajes en Tulum.';
   };
   home: {
