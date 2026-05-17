@@ -46,7 +46,6 @@ declare const messages: {
       reload: 'Recargar';
     };
     notFound: {
-      code: '404';
       title: 'Página no encontrada';
       body: 'La página que buscas no existe o fue movida.';
       cta: 'Volver al inicio';
