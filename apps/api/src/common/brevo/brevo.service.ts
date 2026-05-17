@@ -94,20 +94,10 @@ export class BrevoService {
     footer: string;
     subject: string;
   }): string {
-    // Load the template relative to the dist directory (or src in dev via ts-node).
-    // __dirname points to apps/api/dist/common/brevo in prod, apps/api/src/common/brevo in dev.
-    // The template lives at supabase/templates/welcome.html from the repo root.
-    // Use a path relative to the project root resolved at runtime.
-    let templatePath: string;
-    try {
-      // Production: dist is at apps/api/dist; template is at ../../../../../../supabase/templates/welcome.html
-      templatePath = join(__dirname, '../../../../../../supabase/templates/welcome.html');
-      readFileSync(templatePath); // probe — throws if not found
-    } catch {
-      // Dev (ts-node): src is at apps/api/src
-      templatePath = join(__dirname, '../../../../../supabase/templates/welcome.html');
-    }
-
+    // Load the template relative to the repo root. The relative path is the
+    // same in dev (src/common/brevo) and prod (dist/common/brevo) — both are
+    // 5 levels deep from the repo root.
+    const templatePath = join(__dirname, '../../../../../supabase/templates/welcome.html');
     const raw = readFileSync(templatePath, 'utf-8');
 
     return raw
