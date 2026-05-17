@@ -1,100 +1,81 @@
 ---
-description: Kick off the full feature workflow. Accepts either a feature description (creates new ticket) OR an existing Backlog ticket ID like CU-XXXX (picks it up from the roadmap). Then invokes product-manager to write the full spec.
+description: Kick off the repo-native feature workflow. Accepts a roadmap item id/slug from docs/roadmap/roadmap.md or a new feature description. Produces/updates a spec in docs/specs/ and stops at human gates.
 ---
 
-You are about to orchestrate a feature for the Massage Tulum project. You are acting in PM mode (the main session — there is no sub-agent for PM orchestration).
+You are orchestrating a feature for Massage Tulum in PM mode. There is no PM sub-agent; the main session coordinates agents.
 
-The human's input:
+Human input:
 
 $ARGUMENTS
 
-## Step 0 — Detect input type
+## Step 0 — Read source of truth
 
-Look at $ARGUMENTS:
+Read, in this order:
 
-- **If it matches the pattern `CU-XXXX` (or `cu-xxxx`, case-insensitive)** → the human is picking up an existing Backlog ticket from the roadmap. Skip to Step 2.
-- **If it's a description (free text)** → the human is starting fresh. Go to Step 1.
-- **If $ARGUMENTS is empty or unclear** → list the current Backlog tickets from ClickUp, ask the human "Pick a ticket ID to work on, or describe a new feature." Stop and wait.
+1. `CLAUDE.md`
+2. `docs/roadmap/roadmap.md`
+3. `.claude/status.md`
+4. Existing relevant docs in `docs/specs/`, `docs/architecture/`, `docs/adr/`, `docs/design/`, and `docs/research/`
 
-## Step 1 — (Free-text path) Sanity check + create ticket
+ClickUp is legacy-only. Do not create, update, or search ClickUp unless the human explicitly asks.
 
-Before doing anything else:
-- Re-read `CLAUDE.md` if you haven't this session.
-- Confirm the request fits the v1 scope (studio-owner-first; customer flow comes later).
-- If the request is for the customer flow, surface this and ask the human if they want to proceed or queue it for v2.
-- If the request is too vague to even create a ticket title, ask one clarifying question and stop.
+## Step 1 — Resolve the work item
 
-Then create the ClickUp ticket:
-- Find or create the relevant epic/folder in the `Massage Tulum` space.
-- Create a spec ticket:
-  - Title: `[SPEC] <feature name>`
-  - Status: `Spec`
-  - Description: the human's original request (verbatim) + any clarifications gathered
+If `$ARGUMENTS` matches a roadmap item id or slug, use that roadmap item.
 
-Continue to Step 3.
+If `$ARGUMENTS` is free text, check whether it maps to an existing roadmap item. If it does, use the existing item. If it does not, create a provisional slug and note that the roadmap should be updated after spec approval.
 
-## Step 2 — (Ticket ID path) Pull existing ticket
+If `$ARGUMENTS` is empty or unclear, list the next 3 recommended unblocked items from `docs/roadmap/roadmap.md` and ask the human to pick one.
 
-Fetch the existing ticket from ClickUp:
-- Verify it exists in the Massage Tulum space.
-- Verify its current status. Expected: `Backlog` (if from roadmap) or `Spec` (if previously partially worked).
-- Read the ticket title, description, and any comments.
+## Step 2 — Invoke product-manager in spec mode
 
-If the ticket is a Backlog feature ticket from the roadmap:
-- Update it in place: change title from `[FEATURE] X` to `[SPEC] X`.
-- Move status from `Backlog` to `Spec`.
-- Add a comment: "Picked up for spec writing on YYYY-MM-DD."
+Pass these inputs to the `product-manager` agent:
 
-If the ticket already has a partial spec (status `Spec` already), confirm with the human whether to rewrite from scratch or extend the existing one.
+- Mode: `spec`
+- Work item id/slug and title
+- Roadmap excerpt from `docs/roadmap/roadmap.md`
+- Human's original request
+- Relevant existing docs found in Step 0
+- Constraints from `CLAUDE.md` and accepted ADRs
+- Required output path: `docs/specs/<work-item-slug>.md`
 
-If the ticket is in any later status (`Spec Approved`, `In Design`, etc.), STOP. The feature is already past the spec stage. Surface this to the human and ask what they actually want.
+The product-manager must update `.claude/status.md` with the spec path and open questions.
 
-Continue to Step 3.
+## Step 3 — Human approval gate 1
 
-## Step 3 — Invoke product-manager in spec mode
+When the spec is written:
 
-Pass these inputs to the product-manager sub-agent:
-- **Mode:** `spec` (NOT roadmap)
-- The ticket ID and link
-- The feature description (from ticket or from $ARGUMENTS)
-- Roadmap doc link (if this came from a roadmap ticket)
-- Any related existing specs you found
-- Any constraints from CLAUDE.md or ADRs that obviously apply
+- Surface the spec path.
+- List open questions.
+- Stop. Do not invoke researcher, architect, designer, or developers until the human explicitly approves the spec.
 
-Wait for the product-manager to return its summary.
+## Step 4 — After spec approval
 
-## Step 4 — Surface to human (GATE 1)
+After explicit approval:
 
-Once the product-manager returns:
-- Post the spec link in chat.
-- List any open questions explicitly.
-- **Stop here.** Do not invoke any further agents until the human has reviewed the spec and explicitly approves (e.g., "spec looks good, proceed" or sets the ClickUp ticket to `Spec Approved`).
+1. Invoke `researcher` first if the spec lists unknowns.
+2. Invoke `architect` for technical design.
+3. Invoke `designer` in parallel with architect if the work affects UI.
+4. Surface architecture/design docs to the human. Stop for Gate 2 approval.
 
-## Step 5 — After approval
+## Step 5 — After architecture/design approval
 
-Once the human approves:
-- Identify if research is needed (from the spec's "Research needed" section).
-- If yes, invoke the `researcher` agent first.
-- Then invoke `architect` (with researcher report links if applicable).
-- Then invoke `designer` in parallel with architect if the work is FE-relevant.
-- Wait for both to complete.
-- Surface architect ADRs and designer doc to the human (GATE 2).
+After explicit approval:
 
-## Step 6 — After GATE 2 approval
-
-- Use the architect's ticket breakdown.
-- Invoke developers (`developer-be`, `developer-fe`, `developer-devops`) per ticket, respecting dependencies.
-- For each PR opened: invoke `reviewer`.
-- Loop reviewer ↔ developer until reviewer verdict is `Approved`.
-- Then invoke `qa`.
-- Once QA reports `Ready to merge`, surface the PR to the human (GATE 3).
+1. Use the architecture doc's implementation-slice breakdown.
+2. Invoke the right developer agents per slice, respecting dependencies and worktree isolation.
+3. For each PR, invoke `reviewer`.
+4. Loop reviewer/developer until review passes.
+5. Invoke `qa`.
+6. Once QA reports ready, surface PR(s) to the human for merge.
 
 ## Rules
 
-- Do NOT skip approval gates.
-- Do NOT invoke multiple developers on the same files concurrently — sequential within an overlapping area.
-- If any agent returns "stop and ask the human", surface immediately and wait.
-- If a free tier limit is hit, surface and wait — never silently provision a paid tier.
-- The first feature triggers a lot of foundational scaffolding (Turborepo init, Next.js init, NestJS init, CI, Vercel, etc.). The architect's design doc will explicitly call this out. Don't be surprised if the first feature has more dev tickets than subsequent ones.
+- Do not skip approval gates.
+- Do not use ClickUp by default.
+- Do not merge PRs.
+- Do not provision paid services or rotate/create secrets.
+- Update `.claude/status.md` after each meaningful step.
+- Keep specs and durable decisions in repo docs, not chat-only memory.
 
 Begin Step 0 now.

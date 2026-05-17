@@ -1,44 +1,26 @@
 ---
-description: Kick off a bug fix workflow. Lighter than /new-feature — skips PM/architect/designer unless the bug reveals a design flaw.
+description: Start a repo-native bug fix workflow. Creates/uses a lightweight work item in .claude/status.md and opens a PR; no ClickUp by default.
 ---
 
-You are orchestrating a bug fix for Massage Tulum.
-
-Bug description from human:
+Human input:
 
 $ARGUMENTS
 
 ## Workflow
 
-1. **Triage:** Read the bug description and any logs / screenshots. Decide:
-   - Is this a true bug (something broken that worked / should work)?
-   - Or is this a missing feature dressed as a bug? (If so, redirect to `/new-feature`.)
-   - Does this reveal a deeper design flaw? (If so, escalate — invoke architect to look before fixing.)
+1. Read `CLAUDE.md`, `docs/roadmap/roadmap.md`, `.claude/status.md`, relevant ADRs/specs, and recent git history.
+2. Reproduce or characterize the bug.
+3. Create a short bug slug, e.g. `bug-booking-timezone-display`.
+4. Update `.claude/status.md` with the bug slug, suspected area, and owner agent.
+5. Invoke the appropriate developer agent.
+6. Developer creates a branch `fix/<bug-slug>`, implements, tests, pushes, and opens a PR.
+7. Invoke reviewer, then QA if needed.
+8. Human merges.
 
-2. **Create ClickUp ticket:**
-   - Title: `[BUG] <short description>`
-   - Status: `In Development`
-   - Description: bug report + reproduction steps + expected vs actual
+Rules:
 
-3. **Pick the right developer:**
-   - Backend logic / data / API → `developer-be`
-   - UI / forms / rendering → `developer-fe`
-   - CI / deploy / env → `developer-devops`
+- Do not create ClickUp tickets.
+- If the bug reveals a product or architecture ambiguity, stop and ask the human or invoke architect/researcher first.
+- Do not merge PRs.
 
-4. **Invoke the developer.** Pass:
-   - Ticket link
-   - Reproduction steps
-   - Logs / screenshots
-
-5. **Once PR is opened:** invoke `reviewer`, then `qa`.
-   - QA writes a regression test for the bug. **No bug fix merges without a regression test.**
-
-6. **Surface PR to human (GATE 3).**
-
-## Rules
-
-- If the bug is in production (when prod exists), escalate severity. Surface immediately.
-- If the bug indicates a security issue, stop and ask the human before any code is written. Security fixes may need different disclosure handling.
-- Always require a regression test. Fixing a bug without a test means it'll come back.
-
-Begin triage now.
+Begin by reading the repo-native source of truth.

@@ -9,6 +9,17 @@ model: sonnet
 
 You define what the interface looks like and how it behaves. You don't ship production React.
 
+## Required repo-native context
+
+Before doing any work, read:
+
+1. `CLAUDE.md`
+2. `docs/roadmap/roadmap.md`
+3. `.claude/status.md`
+4. Any referenced spec, ADR, architecture, design, research, or QA docs
+
+The roadmap is the product source of truth. ClickUp is legacy-only; do not create, update, or search ClickUp unless the human explicitly asks. If old instructions conflict with `docs/roadmap/roadmap.md`, prefer the roadmap.
+
 ## Your scope
 
 - Translate specs into UI/UX descriptions for the studio-owner-first desktop interface.
@@ -35,13 +46,13 @@ You define what the interface looks like and how it behaves. You don't ship prod
 
 ## Deliverables per feature
 
-### 1. Screen description doc (ClickUp Docs: `Design / <Feature>`)
+### 1. Screen description doc (repo docs: `Design / <Feature>`)
 
 ```markdown
 # Design: <Feature>
 
 **Spec:** <link>
-**Ticket:** CU-XXXX
+**Ticket:** MT-XXXX
 **Date:** YYYY-MM-DD
 
 ## 1. Screens involved
@@ -137,10 +148,10 @@ Save to `docs/design/components/<ComponentName>.md`. Developer-fe reads these to
 6. For new tokens, propose them with justification.
 7. Write all copy in `es` and `en` (it's fine to mark it draft for human review).
 8. Save artifacts:
-   - Screen description doc → ClickUp Docs
+   - Screen description doc → repo docs
    - Component specs → `docs/design/components/`
    - Tokens → `packages/ui/tokens/` or `docs/design/tokens/`
-9. Update ticket: status, agent, design doc link.
+9. Update work item: status, agent, design doc link.
 10. Return a summary with what's new, what's reused, and any unresolved questions.
 
 ## Final action checklist

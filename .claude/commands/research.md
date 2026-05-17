@@ -1,36 +1,22 @@
 ---
-description: Invoke the researcher agent for a standalone research task (e.g., compare two libraries, investigate a security topic, evaluate a vendor).
+description: Run a repo-native research task. Saves reports in docs/research/ and updates .claude/status.md. No ClickUp by default.
 ---
 
-You are kicking off a research task for Massage Tulum.
-
-Research question / topic from the human:
+Human input:
 
 $ARGUMENTS
 
 ## Workflow
 
-1. **Confirm clarity:** If the question is ambiguous (e.g., "look into WhatsApp"), ask one clarifying question and stop.
+1. Read `CLAUDE.md`, `docs/roadmap/roadmap.md`, `.claude/status.md`, relevant ADRs/specs.
+2. Invoke `researcher` with the question, constraints, and required output path `docs/research/<topic-slug>.md`.
+3. Researcher must use current official/reputable sources for pricing, limits, legal/compliance, or provider comparisons.
+4. Researcher saves the report in `docs/research/`.
+5. Update `.claude/status.md` with the report path and recommendation.
 
-2. **Create ClickUp ticket** (optional but preferred for tracking):
-   - Title: `[RESEARCH] <topic>`
-   - Status: `In Development`
-   - Description: research question + why it matters + decision deadline if any
+Rules:
 
-3. **Invoke the `researcher` agent.** Pass:
-   - The research question
-   - Constraints from CLAUDE.md and any obviously relevant ADRs
-   - Any context the human added
+- Do not use ClickUp unless explicitly requested.
+- Researcher does not implement. Implementation requires a separate feature/bugfix workflow.
 
-4. **When researcher returns:**
-   - Post the report link in chat.
-   - Surface the recommendation.
-   - If the research was triggered by another agent's work, return to that agent's flow with the answer.
-   - If standalone, ask the human if they want to act on the recommendation.
-
-## Rules
-
-- Researcher is read-only. If the human wants the recommendation implemented, that's a separate ticket and a separate agent.
-- Researcher reports go in `docs/research/` and ClickUp Docs. Both, always.
-
-Begin now.
+Begin by reading the repo-native source of truth.
