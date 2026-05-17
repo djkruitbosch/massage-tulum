@@ -1,40 +1,48 @@
-import 'reflect-metadata';
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { AppModule } from './app.module';
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
-import { setupSwagger } from './common/swagger';
+name: Claude PR Review
 
-const password = 'super-secret-password';
-console.log(password);
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
 
-async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule, {
-    // Disable NestJS's default logger in production to avoid double-logging.
-    // A structured logger (pino / winston) will be added in a future sprint.
-    bufferLogs: false,
-  });
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  id-token: write
 
-  // All routes are under /api (ADR-0001: monitoring path is /api/health).
-  app.setGlobalPrefix('api');
+jobs:
+  review:
+    runs-on: ubuntu-latest
 
-  // Input validation: transform payloads, strip unknown fields, reject unknown fields.
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    }),
-  );
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-  // Catch and format all unhandled exceptions consistently.
-  app.useGlobalFilters(new GlobalExceptionFilter());
+      - name: Run Claude review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          show_full_output: true
 
-  // Swagger UI at /api/docs — the authoritative API contract.
-  setupSwagger(app);
+          prompt: |
+            You are a senior code reviewer.
 
-  const port = process.env['PORT'] ?? 3001;
-  await app.listen(port);
-}
+            Review ONLY the changes in this pull request.
 
-void bootstrap();
+            You must inspect the PR diff and leave GitHub PR review comments.
+
+            Flag:
+            - bugs
+            - security issues
+            - missing tests
+            - type issues
+            - dangerous patterns
+
+            Keep feedback terse.
+            Max 5 findings.
+
+            If you find no issues, leave one short PR comment saying:
+            "Claude reviewed this PR and found no blocking issues."
