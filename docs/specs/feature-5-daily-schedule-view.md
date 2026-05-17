@@ -52,7 +52,7 @@ Numbers within each section are sequential and unique across the entire spec for
 ### 3.2 Column-per-therapist layout
 
 7. Given one or more active therapists in the studio, when the schedule renders, then exactly one column renders per active therapist, and the column header displays that therapist's name.
-8. Given the therapist list includes both active and deactivated therapists, when the schedule renders, then only active therapists (status = `active`) have columns — deactivated therapists produce no column.
+8. Given the therapist list includes both active and deactivated therapists, when the schedule renders, then only active therapists (status = `active`) have columns — deactivated therapists produce no column. _Cross-ref: F3 (Therapist Roster) surfaces a deactivation warning when a therapist with future bookings is deactivated. That warning is the primary safeguard against the "orphaned booking" edge case described in §6._
 9. Given a studio with between 1 and 5 active therapists (the primary design target), when the schedule renders, then all therapist columns are visible without layout breakage.
 10. Given a studio with 5 or more active therapists, when the schedule renders, then all columns are accessible (horizontal scroll within the schedule grid is acceptable); no booking data is hidden; no column is clipped invisibly.
 11. Given a therapist is deactivated after the schedule page has loaded, when the owner views the same session without refreshing, then the deactivated therapist's column remains visible until the page is reloaded (stale view is acceptable in v1 — no real-time column removal required).
@@ -236,6 +236,9 @@ schedule.emptyState.noTherapists.cta          es: "Gestionar terapeutas"        
 
 schedule.emptyState.noBookings.title          es: "Sin citas para este día"                     en: "No bookings for this day"
 schedule.emptyState.noBookings.body           es: "Este día no tiene citas programadas."         en: "No bookings are scheduled for this day."
+# NOTE: `schedule.emptyState.noBookings.*` is conditional on OQ-1. If Gate 1 keeps the "+" placeholder
+# default (OQ-1), this pair is unused and SHOULD be dropped before implementation to avoid an unused-key
+# build warning. If Gate 1 flips OQ-1 to "white space", this pair is rendered as the column-level empty state.
 
 schedule.closedDay.title                      es: "Estudio cerrado"                             en: "Studio closed"
 schedule.closedDay.body                       es: "El estudio no opera este día según sus horarios."  en: "The studio is not operating on this day according to its hours."
@@ -406,5 +409,29 @@ These are explicitly NOT answered in this spec. Spec answers "what" and "why"; t
 - API endpoint design: route (`GET /api/schedule?date=YYYY-MM-DD` vs. others), response shape, HTTP caching headers (if any).
 - Therapist column ordering: whether `order_index` is added to `therapists` table and how ties are broken.
 - RLS policy for `bookings`: exact SQL, join path, helper function reuse per ADR-0003 pattern.
-- F5 data fetching strategy: React Query, SWR, Next.js server component with streaming, or direct fetch — architect decides consistent with patterns established for other features.
+- F5 data fetching strategy: React Query, SWR, Next.js server component with streaming, or direct fetch — architect decides consistent with patterns established for other features. ADR-0006 (CSP middleware with per-request nonce) constrains client-side data-fetching choices; the architect must document compatibility in the F5 ADR.
 - F5 + F7 interface: how F7 wires the click handler onto the F5 "+" placeholder (prop injection vs. shared component vs. route co-location).
+
+**ADRs the architect should cross-reference (not author here):**
+- ADR-0003 — RLS / pgTAP conventions (applies to the new `bookings` table)
+- ADR-0006 — CSP middleware with per-request nonce (applies to any inline script-based data fetch or hydration approach in the schedule page)
+- Any ADR established by F4 for the `services` data-fetching pattern (architect to verify and reuse)
+
+---
+
+## 15. Gate 1 decisions
+
+Resolutions to §10 open questions, captured here when the human (or autonomous reviewer with explicit authority) approves the spec for handoff to designer and architect. Until every row is filled, the spec is in draft and downstream work should not start.
+
+| # | Question | Resolution | Decided by | Date |
+|---|---|---|---|---|
+| OQ-1 | Empty slot rendering | _pending_ | _pending_ | _pending_ |
+| OQ-2 | Closed-day rail | _pending_ | _pending_ | _pending_ |
+| OQ-3 | Cancelled bookings on view | _pending_ | _pending_ | _pending_ |
+| OQ-4 | Time rail tick granularity | _pending_ | _pending_ | _pending_ |
+| OQ-5 | Print / PDF view | _pending_ | _pending_ | _pending_ |
+| OQ-6 | Therapist column ordering | _pending_ | _pending_ | _pending_ |
+| OQ-7 | Studio hours not configured | _pending_ | _pending_ | _pending_ |
+| OQ-8 | Hard navigation limit | _pending_ | _pending_ | _pending_ |
+
+**Resolution policy:** Each resolution must either accept the §10 default recommendation verbatim or explicitly state a different choice with a one-line rationale. A blank or ambiguous resolution is not approval.
