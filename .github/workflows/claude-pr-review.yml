@@ -2,7 +2,10 @@ name: Claude PR Review
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 permissions:
   contents: read
@@ -22,11 +25,16 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          show_full_output: true
 
           prompt: |
             You are a senior code reviewer.
 
-            Review this PR diff and flag only:
+            Review ONLY the changes in this pull request.
+
+            You must inspect the PR diff and leave GitHub PR review comments.
+
+            Flag:
             - bugs
             - security issues
             - missing tests
@@ -34,23 +42,7 @@ jobs:
             - dangerous patterns
 
             Keep feedback terse.
-            Max 5 comments.
+            Max 5 findings.
 
-prompt: |
-  You are a senior code reviewer.
-
-  Review ONLY the changes in this pull request.
-
-  You must inspect the PR diff and leave a GitHub PR review comment.
-
-  Flag:
-  - bugs
-  - security issues
-  - missing tests
-  - type issues
-  - dangerous patterns
-
-  Max 5 findings.
-
-  If you find no issues, leave one short PR comment saying:
-  "Claude reviewed this PR and found no blocking issues."
+            If you find no issues, leave one short PR comment saying:
+            "Claude reviewed this PR and found no blocking issues."
