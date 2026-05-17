@@ -47,6 +47,11 @@ yarn-debug.log*
 # claude code worktrees (orchestrator creates these for parallel agents; never commit)
 .claude/worktrees/
 
+# claude code per-worker scratch state (session logs, recovery snapshots, checkpoints)
+.claude/sessions/
+.claude/status.md
+.claude/checkpoints/
+
 # misc
 .cache/
 *.tsbuildinfo
