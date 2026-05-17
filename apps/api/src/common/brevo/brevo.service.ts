@@ -2,6 +2,16 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
+/** Escape HTML-special characters for safe interpolation into an HTML body / attribute. */
+export function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 /** Brevo transactional email send request shape (v3 API). */
 interface BrevoEmailRequest {
   sender: { name: string; email: string };
@@ -85,7 +95,14 @@ export class BrevoService {
    * Renders the welcome.html template by replacing placeholder tokens.
    *
    * welcome.html uses double-brace tokens: {{BODY}}, {{MAGIC_LINK}}, {{CTA}},
-   * {{FOOTER}}, {{SUBJECT}} — replaced by simple string substitution.
+   * {{FOOTER}}, {{SUBJECT}} — replaced by HTML-escaped string substitution.
+   *
+   * BODY contains the studio owner's `studioName` (user input from the signup
+   * flow), so every substitution is HTML-escaped to keep `<`, `>`, `&`, `"`,
+   * `'` from breaking out of their context. The locale-hardcoded values pass
+   * through unchanged since they contain no HTML-special characters; the
+   * Supabase magic link's `?a=b&c=d` is escaped to `?a=b&amp;c=d`, which is
+   * still a valid href.
    */
   private renderWelcomeTemplate(opts: {
     body: string;
@@ -101,11 +118,11 @@ export class BrevoService {
     const raw = readFileSync(templatePath, 'utf-8');
 
     return raw
-      .replace(/\{\{SUBJECT\}\}/g, opts.subject)
-      .replace(/\{\{BODY\}\}/g, opts.body)
-      .replace(/\{\{MAGIC_LINK\}\}/g, opts.magicLink)
-      .replace(/\{\{CTA\}\}/g, opts.cta)
-      .replace(/\{\{FOOTER\}\}/g, opts.footer);
+      .replace(/\{\{SUBJECT\}\}/g, escapeHtml(opts.subject))
+      .replace(/\{\{BODY\}\}/g, escapeHtml(opts.body))
+      .replace(/\{\{MAGIC_LINK\}\}/g, escapeHtml(opts.magicLink))
+      .replace(/\{\{CTA\}\}/g, escapeHtml(opts.cta))
+      .replace(/\{\{FOOTER\}\}/g, escapeHtml(opts.footer));
   }
 
   private async sendEmail(opts: {
