@@ -19,9 +19,9 @@ export async function PendingApprovalNotice() {
   const t = await getTranslations('auth');
 
   return (
-    <div className="max-w-narrow mx-auto px-4 py-16 sm:py-16">
+    <div className="max-w-narrow mx-auto px-4 py-8 sm:py-16">
       <div
-        className="bg-warning-50 border border-warning-500 rounded-2xl shadow-sm p-8 sm:p-8 p-5"
+        className="bg-warning-50 border border-warning-500 rounded-2xl shadow-sm p-5 sm:p-8"
         role="status"
         aria-label={t('dashboard.pendingApproval.title')}
       >
