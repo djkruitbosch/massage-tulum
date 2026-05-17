@@ -18,6 +18,7 @@
 import { LayoutGrid, ShoppingBag, UserCircle, Users } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
+import { Footer } from '../_components/footer';
 import { createClient } from '../../../utils/supabase/server';
 import { PendingApprovalNotice } from './_components/pending-approval-notice';
 import { UserMenu } from './_components/user-menu';
@@ -58,7 +59,7 @@ export default async function DashboardPage() {
           <main id="main-content" className="flex-1 bg-neutral-50" role="main">
             <PendingApprovalNotice />
           </main>
-          <DashboardFooter tLayout={tLayout} />
+          <Footer locale={locale} />
         </div>
       </>
     );
@@ -72,7 +73,6 @@ export default async function DashboardPage() {
     .single();
 
   const studioName = studio?.name ?? '';
-  const currentYear = new Date().getFullYear();
 
   return (
     <>
@@ -141,13 +141,7 @@ export default async function DashboardPage() {
             </div>
           </div>
         </main>
-        <footer className="h-12 border-t border-neutral-200 bg-white" role="contentinfo">
-          <div className="mx-auto flex h-full max-w-content items-center justify-center px-4">
-            <p className="text-xs text-neutral-400 text-center">
-              {tLayout('footer.copyright', { year: String(currentYear) })}
-            </p>
-          </div>
-        </footer>
+        <Footer locale={locale} />
       </div>
     </>
   );
@@ -228,20 +222,3 @@ function DashboardHeader({ email, locale, tLayout, tLs }: HeaderProps) {
   );
 }
 
-interface FooterProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  tLayout: any;
-}
-
-function DashboardFooter({ tLayout }: FooterProps) {
-  const currentYear = new Date().getFullYear();
-  return (
-    <footer className="h-12 border-t border-neutral-200 bg-white" role="contentinfo">
-      <div className="mx-auto flex h-full max-w-content items-center justify-center px-4">
-        <p className="text-xs text-neutral-400 text-center">
-          {tLayout('footer.copyright', { year: String(currentYear) })}
-        </p>
-      </div>
-    </footer>
-  );
-}

@@ -24,6 +24,7 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 import { getMyStudioProfile } from '../../../../actions/studio-profile';
 import { createClient } from '../../../../utils/supabase/server';
+import { Footer } from '../../_components/footer';
 import { ProfileFormWrapper } from './_components/profile-form-wrapper';
 
 export default async function StudioProfilePage() {
@@ -105,7 +106,6 @@ interface ProfileShellProps {
 }
 
 function ProfileShell({ children, tLayout, locale }: ProfileShellProps) {
-  const currentYear = new Date().getFullYear();
   const dashboardHref = locale === 'en' ? '/en/dashboard' : '/dashboard';
 
   return (
@@ -136,14 +136,7 @@ function ProfileShell({ children, tLayout, locale }: ProfileShellProps) {
           <div className="mx-auto max-w-content px-4 py-8 sm:px-6 lg:px-8">{children}</div>
         </main>
 
-        {/* Footer */}
-        <footer className="h-12 border-t border-neutral-200 bg-white" role="contentinfo">
-          <div className="mx-auto flex h-full max-w-content items-center justify-center px-4">
-            <p className="text-xs text-neutral-400 text-center">
-              {tLayout('footer.copyright', { year: String(currentYear) })}
-            </p>
-          </div>
-        </footer>
+        <Footer locale={locale} />
       </div>
     </>
   );

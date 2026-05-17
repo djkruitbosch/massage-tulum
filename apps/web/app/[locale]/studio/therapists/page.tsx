@@ -23,6 +23,7 @@ import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 import { getMyTherapists } from '../../../../actions/therapists';
 import { createClient } from '../../../../utils/supabase/server';
+import { Footer } from '../../_components/footer';
 import { TherapistList } from './_components/therapist-list';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -66,7 +67,6 @@ export default async function TherapistsPage({ searchParams }: TherapistsPagePro
   }
 
   const dashboardHref = locale === 'en' ? '/en/dashboard' : '/dashboard';
-  const currentYear = new Date().getFullYear();
 
   return (
     <>
@@ -134,14 +134,7 @@ export default async function TherapistsPage({ searchParams }: TherapistsPagePro
           </div>
         </main>
 
-        {/* Footer */}
-        <footer className="h-12 border-t border-neutral-200 bg-white" role="contentinfo">
-          <div className="mx-auto flex h-full max-w-content items-center justify-center px-4">
-            <p className="text-xs text-neutral-400 text-center">
-              {tLayout('footer.copyright', { year: String(currentYear) })}
-            </p>
-          </div>
-        </footer>
+        <Footer locale={locale} />
       </div>
     </>
   );
