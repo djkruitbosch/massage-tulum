@@ -15,7 +15,12 @@
  * because the root layout intentionally does not load globals.css.
  */
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Página no encontrada / Page not found',
+};
 
 const containerStyle = {
   display: 'flex',
@@ -64,11 +69,13 @@ const linkStyle = {
 export default function RootNotFound() {
   return (
     <main style={containerStyle}>
-      <p aria-hidden="true" style={codeStyle}>
+      <div aria-hidden="true" style={codeStyle}>
         404
-      </p>
-      <h1 style={headingStyle} lang="es">
-        Página no encontrada
+      </div>
+      <h1 style={headingStyle}>
+        <span lang="es">Página no encontrada</span>
+        <span aria-hidden="true"> · </span>
+        <span lang="en">Page not found</span>
       </h1>
       <p style={bodyStyle}>
         <span lang="es">La página que buscas no existe.</span>
