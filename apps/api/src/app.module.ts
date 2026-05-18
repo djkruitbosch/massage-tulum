@@ -19,15 +19,22 @@ import { ServicesModule } from './services/services.module';
  * ThrottlerGuard via APP_GUARD, the decorator is just metadata that nothing
  * reads.
  *
+ * Default budget is intentionally generous (100 req / 60 s / IP). Because the
+ * API sits behind the Vercel frontend, every studio owner's traffic egresses
+ * from Vercel's serverless function IP pool — meaning many users (and many
+ * server-action calls per page load) share the same throttler bucket. A tight
+ * default starves normal authenticated traffic. Endpoints that need stricter
+ * limits (signup, password reset, etc.) opt in with @Throttle() per ADR-0008.
+ *
  * See: docs/adr/0008-studio-onboarding-self-signup.md §1
  */
 @Module({
   imports: [
     ThrottlerModule.forRoot([
       {
-        // Default throttler config — overridden per-endpoint with @Throttle().
+        // Generous default; tight per-endpoint limits via @Throttle().
         ttl: 60000,
-        limit: 10,
+        limit: 100,
       },
     ]),
     HealthModule,
