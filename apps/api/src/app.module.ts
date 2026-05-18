@@ -28,15 +28,17 @@ import { ServicesModule } from './services/services.module';
  *
  * See: docs/adr/0008-studio-onboarding-self-signup.md §1
  */
+export const THROTTLER_DEFAULTS = [
+  {
+    // Generous default; tight per-endpoint limits via @Throttle().
+    ttl: 60000,
+    limit: 100,
+  },
+] as const;
+
 @Module({
   imports: [
-    ThrottlerModule.forRoot([
-      {
-        // Generous default; tight per-endpoint limits via @Throttle().
-        ttl: 60000,
-        limit: 100,
-      },
-    ]),
+    ThrottlerModule.forRoot([...THROTTLER_DEFAULTS]),
     HealthModule,
     StudiosModule,
     TherapistsModule,

@@ -1,9 +1,7 @@
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import 'reflect-metadata';
-import { AppModule } from '../app.module';
+import { AppModule, THROTTLER_DEFAULTS } from '../app.module';
 
 interface ProviderEntry {
   provide?: unknown;
@@ -31,14 +29,8 @@ describe('AppModule', () => {
     // legitimate authenticated requests across the entire app — the exact
     // production symptom that triggered this PR. Tighter per-endpoint limits
     // (e.g. signup at 3/min) remain in place via @Throttle() decorators.
-    //
-    // Reflect.getMetadata can't reach into the DynamicModule that
-    // ThrottlerModule.forRoot returns, so we assert directly against the
-    // source — the only place the value is set.
-    const src = readFileSync(join(__dirname, '..', 'app.module.ts'), 'utf-8');
-    const match = src.match(/ThrottlerModule\.forRoot\(\s*\[\s*{[\s\S]*?limit:\s*(\d+)/);
-    expect(match).toBeTruthy();
-    const limit = Number(match![1]);
-    expect(limit).toBeGreaterThanOrEqual(60);
+    expect(THROTTLER_DEFAULTS).toHaveLength(1);
+    expect(THROTTLER_DEFAULTS[0].ttl).toBe(60000);
+    expect(THROTTLER_DEFAULTS[0].limit).toBeGreaterThanOrEqual(60);
   });
 });
