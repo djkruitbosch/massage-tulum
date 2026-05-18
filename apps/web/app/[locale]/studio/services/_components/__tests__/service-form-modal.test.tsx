@@ -154,6 +154,19 @@ describe('ServiceFormModal — Add mode', () => {
     const dialog = screen.getByRole('dialog');
     expect(dialog).toHaveAttribute('aria-modal', 'true');
   });
+
+  // Regression guard for the prod centering bug where `sm:inset-x-auto`
+  // clobbered the `left-1/2` centering, anchoring the modal off-screen-left.
+  // The dialog must keep its `left-1/2 -translate-x-1/2` pair and must NOT
+  // ship `inset-x-*` utilities that would set `left: auto`.
+  it('centers the dialog with left-1/2 + translate-x-1/2 and no conflicting inset-x', () => {
+    renderAddModal();
+    const dialog = screen.getByRole('dialog');
+    const cls = dialog.className;
+    expect(cls).toContain('left-1/2');
+    expect(cls).toContain('-translate-x-1/2');
+    expect(cls).not.toMatch(/\binset-x-/);
+  });
 });
 
 describe('ServiceFormModal — Edit mode', () => {
