@@ -252,9 +252,8 @@ export function ServiceFormModal({
         aria-labelledby={titleId}
         aria-modal="true"
         className={[
-          'fixed z-[200] w-full max-w-lg',
+          'fixed z-[200] w-full max-w-[calc(100vw-2rem)] sm:max-w-lg',
           'top-[10vh] left-1/2 -translate-x-1/2',
-          'inset-x-4 sm:inset-x-auto',
           'bg-white rounded-lg shadow-lg',
           'overflow-y-auto max-h-[80vh]',
         ].join(' ')}
