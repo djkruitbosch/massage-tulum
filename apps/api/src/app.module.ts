@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { HealthModule } from './health/health.module';
 import { StudiosModule } from './studios/studios.module';
 import { TherapistsModule } from './therapists/therapists.module';
@@ -12,8 +13,12 @@ import { ServicesModule } from './services/services.module';
  * feature sprint (studios, therapists, bookings, auth, ...).
  * Do not add business logic or providers directly to this module.
  *
- * ThrottlerModule: global rate limiter used by @Throttle() on public endpoints.
- * Default: 3 requests / 60 seconds / IP (applies where @Throttle is applied).
+ * ThrottlerModule + ThrottlerGuard: rate limiter wired up globally so that
+ * the @Throttle() decorator on public endpoints (e.g. POST /api/studios/signup,
+ * 3 req / 60 s / IP per ADR-0008 §1) is actually enforced. Without registering
+ * ThrottlerGuard via APP_GUARD, the decorator is just metadata that nothing
+ * reads.
+ *
  * See: docs/adr/0008-studio-onboarding-self-signup.md §1
  */
 @Module({
@@ -29,6 +34,12 @@ import { ServicesModule } from './services/services.module';
     StudiosModule,
     TherapistsModule,
     ServicesModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}
