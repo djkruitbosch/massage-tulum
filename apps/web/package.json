@@ -19,7 +19,7 @@
     "next-intl": "^4.9.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "react-hook-form": "^7.75.0",
+    "react-hook-form": "^7.76.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
