@@ -22,10 +22,9 @@ Copy `.env.example` to `.env` and fill in real values. Never commit `.env`.
 
 | Variable | Required | Description |
 |---|---|---|
-| `SUPABASE_URL` | Yes | Supabase project URL |
+| `SUPABASE_URL` | Yes | Supabase project URL. Also used to derive the JWKS endpoint (`${SUPABASE_URL}/auth/v1/.well-known/jwks.json`) and the expected `iss` claim — see ADR-0012. |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | Service-role key — server-side only, bypasses RLS |
 | `SUPABASE_ANON_KEY` | Yes | Public anon key — used with user JWT for RLS-scoped access |
-| `SUPABASE_JWT_SECRET` | Yes | JWT secret from Supabase project settings > API |
 | `SUPABASE_SITE_URL` | No | Base URL for magic-link redirects (defaults to `http://localhost:3000`) |
 | `ADMIN_EMAILS` | Yes | Comma-separated list of admin emails |
 | `BREVO_API_KEY` | Yes | Brevo HTTP API key for transactional email |
