@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@massage-tulum/shared": "workspace:*",
-    "@nestjs/common": "^11.0.0",
+    "@nestjs/common": "^11.1.24",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/swagger": "^11.0.0",
