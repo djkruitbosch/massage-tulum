@@ -15,14 +15,14 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@commitlint/cli": "21.0.1",
-    "@commitlint/config-conventional": "21.0.1",
+    "@commitlint/cli": "21.2.1",
+    "@commitlint/config-conventional": "21.2.0",
     "@typescript-eslint/eslint-plugin": "^8.32.0",
     "@typescript-eslint/parser": "^8.32.0",
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.5",
     "husky": "9.1.7",
-    "lint-staged": "17.0.4",
+    "lint-staged": "17.2.0",
     "prettier": "^3.5.3",
     "turbo": "^2.5.3",
     "typescript": "^5.8.3",
